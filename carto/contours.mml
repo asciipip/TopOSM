@@ -50,7 +50,7 @@
             "Datasource": {
                 "type": "postgis",
                 "dbname": "ned",
-                "table": "(SELECT ele_ft, wkb_geometry, CASE WHEN ele_ft % 250 = 0 THEN 3 WHEN ele_ft % 50 = 0 THEN 2 ELSE 1 END AS class FROM contours_tmp WHERE ele_ft % 25 = 0) AS contours",
+                "table": "(SELECT ele_ft, wkb_geometry, CASE WHEN ele_ft % 200 = 0 THEN 3 WHEN ele_ft % 40 = 0 THEN 2 ELSE 1 END AS class FROM contours_tmp WHERE ele_ft % 20 = 0) AS contours",
                 "extent": "-127,23,-65,51"
             }
         },

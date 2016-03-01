@@ -90,3 +90,4 @@ if __name__ == "__main__":
     for z in xrange(args.min_zoom, args.max_zoom+1):
         for (x, y) in expired.expiredAt(z):
             queue_tile_if_needed(z, x, y, chan, args)
+    conn.close()

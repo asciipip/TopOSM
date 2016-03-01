@@ -69,10 +69,12 @@ class ContinuousRenderThread:
         start_time = time.time()
         layerTimes = None
         if metaTileNeedsRendering(mt.z, mt.x, mt.y):
+            print time.strftime('%Y-%m-%d %H:%M:%S')
             message = 'Rendering {0}'.format(mt)
             if len(self.maps) <= mt.z or not self.maps[mt.z]:
                 self.loadMaps(mt.z)
             layerTimes = self.runAndLog(message, renderMetaTile, (mt.z, mt.x, mt.y, NTILES[mt.z], self.maps[mt.z]))
+            print time.strftime('%Y-%m-%d %H:%M:%S')
         if layerTimes:
             stats.recordRender(mt.z, time.time() - start_time, layerTimes)
         self.printMessage('Notifying queuemaster of completion.')

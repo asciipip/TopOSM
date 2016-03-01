@@ -122,12 +122,13 @@ class ContinuousRenderThread:
 
     def unregister(self):
         self.printMessage('Unregistering with queuemaster.')
-        self.chan.basic_publish(
-            exchange='osm',
-            routing_key='toposm.queuemaster',
-            properties=pika.BasicProperties(reply_to=self.commandQueue,
-                                            content_type='application/json'),
-            body=json.dumps({'command': 'unregister'}))
+        pika.BlockingConnection(pika.ConnectionParameters(host=DB_HOST)).\
+            channel().basic_publish(
+                exchange='osm',
+                routing_key='toposm.queuemaster',
+                properties=pika.BasicProperties(reply_to=self.commandQueue,
+                                                content_type='application/json'),
+                body=json.dumps({'command': 'unregister'}))
 
     def renderLoop(self):
         self.register()

@@ -29,7 +29,7 @@
                 "type": "postgis",
                 "dbname": "ned",
                 "table": "(SELECT ele_ft, wkb_geometry FROM contours_tmp WHERE ele_ft % 200 = 0) AS contours",
-                "extent": "-127,23,-65,51"
+                "extent": "-180,7,-20,85"
             }
         },
         {
@@ -40,7 +40,7 @@
                 "type": "postgis",
                 "dbname": "ned",
                 "table": "(SELECT ele_ft, wkb_geometry FROM contours_tmp WHERE ele_ft % 100 = 0) AS contours",
-                "extent": "-127,23,-65,51"
+                "extent": "-180,7,-20,85"
             }
         }
     ],

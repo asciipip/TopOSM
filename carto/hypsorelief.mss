@@ -2,6 +2,6 @@ Map {
     background-color: #bbb;
 }
 
-#hypsorelief {
+.hypsorelief {
     raster-scaling: bilinear;
 }

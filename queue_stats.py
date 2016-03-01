@@ -94,3 +94,4 @@ while not result_received:
             print ''
             print_stats(message)
             result_received = True
+conn.close()

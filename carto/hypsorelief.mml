@@ -21,31 +21,61 @@
     "Layer": [
         {
             "geometry": "raster",
-            "id": "hypsorelief-1",
-            "name": "hypsorelief-1",
+            "id": "hs-new-12",
+            "name": "hs-new-12",
             "class": "hypsorelief",
             "Datasource": {
-                "file": "/srv/usgs/NED/hypsorelief-1.vrt"
+                "file": "/zmedia/usgs/hs/all-12.vrt"
             },
             "srs": "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over"
         },
         {
             "geometry": "raster",
-            "id": "hypsorelief-13",
-            "name": "hypsorelief-13",
+            "id": "hs-new-13",
+            "name": "hs-new-13",
             "class": "hypsorelief",
             "Datasource": {
-                "file": "/srv/usgs/NED/hypsorelief-13.vrt"
+                "file": "/zmedia/usgs/hs/all-13.vrt"
             },
             "srs": "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over"
         },
         {
             "geometry": "raster",
-            "id": "hypsorelief-19",
-            "name": "hypsorelief-19",
+            "id": "hs-new-14",
+            "name": "hs-new-14",
             "class": "hypsorelief",
             "Datasource": {
-                "file": "/srv/usgs/NED/hypsorelief-19.vrt"
+                "file": "/zmedia/usgs/hs/all-14.vrt"
+            },
+            "srs": "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over"
+        },
+        {
+            "geometry": "raster",
+            "id": "hs-new-16",
+            "name": "hs-new-16",
+            "class": "hypsorelief",
+            "Datasource": {
+                "file": "/zmedia/usgs/hs/all-16.vrt"
+            },
+            "srs": "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over"
+        },
+        {
+            "geometry": "raster",
+            "id": "hs-new-17",
+            "name": "hs-new-17",
+            "class": "hypsorelief",
+            "Datasource": {
+                "file": "/zmedia/usgs/hs/all-17.vrt"
+            },
+            "srs": "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over"
+        },
+        {
+            "geometry": "raster",
+            "id": "hs-new-18",
+            "name": "hs-new-18",
+            "class": "hypsorelief",
+            "Datasource": {
+                "file": "/zmedia/usgs/hs/all-18.vrt"
             },
             "srs": "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over"
         }

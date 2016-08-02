@@ -24,23 +24,23 @@
         {
             "id": "contours-medium",
             "name": "contours-medium",
-            "srs": "+proj=latlong +datum=NAD83 +ellps=GRS80 +no_defs",
+            "srs": "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +no_defs +over",
             "Datasource": {
                 "type": "postgis",
                 "dbname": "ned",
-                "table": "(SELECT ele_ft, wkb_geometry FROM contours_tmp WHERE ele_ft % 200 = 0) AS contours",
-                "extent": "-180,7,-20,85"
+                "table": "(SELECT ele_ft, wkb_geometry FROM contours WHERE ele_ft % 200 = 0) AS contours",
+                "extent": "-20037508,-19929239,20037508,19929239"
             }
         },
         {
             "id": "contours-high",
             "name": "contours-high",
-            "srs": "+proj=latlong +datum=NAD83 +ellps=GRS80 +no_defs",
+            "srs": "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +no_defs +over",
             "Datasource": {
                 "type": "postgis",
                 "dbname": "ned",
-                "table": "(SELECT ele_ft, wkb_geometry FROM contours_tmp WHERE ele_ft % 100 = 0) AS contours",
-                "extent": "-180,7,-20,85"
+                "table": "(SELECT ele_ft, wkb_geometry FROM contours WHERE ele_ft % 100 = 0) AS contours",
+                "extent": "-20037508,-19929239,20037508,19929239"
             }
         }
     ],

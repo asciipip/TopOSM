@@ -153,7 +153,7 @@
             "Datasource": {
                 "type": "postgis",
                 "dbname": "osm",
-                "table": "(SELECT way, coalesce('natural_' || \"natural\", 'power_' || power, 'aeroway_' || aeroway, 'railway_' || railway, 'aerialway_' || aerialway, 'tourism_' || tourism, 'amenity_' || amenity, 'landuse_' || landuse) AS feature, access FROM planet_osm_polygon WHERE \"natural\" IS NOT NULL OR power IS NOT NULL OR aeroway IS NOT NULL OR railway IS NOT NULL OR aerialway IS NOT NULL OR tourism IS NOT NULL OR amenity IS NOT NULL OR landuse IS NOT NULL ORDER BY way_area DESC) as icons",
+                "table": "(SELECT way, coalesce('natural_' || \"natural\", 'power_' || power, 'aeroway_' || aeroway, 'railway_' || railway, 'aerialway_' || aerialway, 'tourism_' || tourism, 'amenity_' || amenity, 'landuse_' || landuse, 'man_made_' || man_made) AS feature, access, \"tower:type\" AS tower_type FROM planet_osm_polygon WHERE \"natural\" IS NOT NULL OR power IS NOT NULL OR aeroway IS NOT NULL OR railway IS NOT NULL OR aerialway IS NOT NULL OR tourism IS NOT NULL OR amenity IS NOT NULL OR landuse IS NOT NULL OR man_made IS NOT NULL ORDER BY way_area DESC) as icons",
                 "extent": "-20037508,-19929239,20037508,19929239"
             }
         },
@@ -165,7 +165,7 @@
             "Datasource": {
                 "type": "postgis",
                 "dbname": "osm",
-                "table": "(SELECT way, coalesce('natural_' || \"natural\", 'power_' || power, 'aeroway_' || aeroway, 'railway_' || railway, 'aerialway_' || aerialway, 'tourism_' || tourism, 'amenity_' || amenity, 'landuse_' || landuse) AS feature, access FROM planet_osm_point WHERE \"natural\" IS NOT NULL OR power IS NOT NULL OR aeroway IS NOT NULL OR railway IS NOT NULL OR aerialway IS NOT NULL OR tourism IS NOT NULL OR amenity IS NOT NULL OR landuse IS NOT NULL) as icons",
+                "table": "(SELECT way, coalesce('natural_' || \"natural\", 'power_' || power, 'aeroway_' || aeroway, 'railway_' || railway, 'aerialway_' || aerialway, 'tourism_' || tourism, 'amenity_' || amenity, 'landuse_' || landuse, 'man_made_' || man_made) AS feature, access, \"tower:type\" AS tower_type FROM planet_osm_point WHERE \"natural\" IS NOT NULL OR power IS NOT NULL OR aeroway IS NOT NULL OR railway IS NOT NULL OR aerialway IS NOT NULL OR tourism IS NOT NULL OR amenity IS NOT NULL OR landuse IS NOT NULL OR man_made IS NOT NULL) as icons",
                 "extent": "-20037508,-19929239,20037508,19929239"
             }
         }

@@ -440,6 +440,27 @@ Map {
         }
     }
 
+    [feature = 'man_made_tower'] {
+        [zoom >= 13] {
+            point-file: url('custom-symbols/Gfi-set01-tower.svg');
+            [tower_type = 'communication'] { point-file: url('custom-symbols/Gfi-set01-antenna.svg'); }
+            [zoom >= 13][zoom < 14] { point-transform: scale(0.3, 0.3); }
+            [zoom >= 14][zoom < 15] { point-transform: scale(0.4, 0.4); }
+            [zoom >= 15][zoom < 16] { point-transform: scale(0.5, 0.5); }
+            [zoom >= 16]            { point-transform: scale(0.7, 0.7); }
+        }
+    }
+    [feature = 'man_made_mast'],
+    [feature = 'man_made_communication_tower'] {
+        [zoom >= 13] {
+            point-file: url('custom-symbols/Gfi-set01-antenna.svg');
+            [zoom >= 13][zoom < 14] { point-transform: scale(0.3, 0.3); }
+            [zoom >= 14][zoom < 15] { point-transform: scale(0.4, 0.4); }
+            [zoom >= 15][zoom < 16] { point-transform: scale(0.5, 0.5); }
+            [zoom >= 16]            { point-transform: scale(0.7, 0.7); }
+        }
+    }
+    
     [feature = 'amenity_shelter'] {
         [zoom >= 13] {
             point-file: url('custom-symbols/black-svg/shelter.svg');

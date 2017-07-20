@@ -31,7 +31,6 @@ class StatsManager:
                     },
                     'fields': {'render_time': layer_time}
                 })
-            print influx_frames
             self.influx_client.write_points(influx_frames)
         
             with open('stats', 'r') as f:

@@ -12,6 +12,7 @@ import re
 import threading
 
 # addon modules
+import influxdb
 import pika
 import xattr
 
@@ -396,6 +397,7 @@ class Queuemaster:
         self.expirer = TileExpirer(self.maxz, self.queue)
         self.expirer.start()
         self.renderers = {}
+        self.influx_client = influxdb.InfluxDBClient(database='toposm')
 
     ### Startup sequence.
     
@@ -509,6 +511,7 @@ class Queuemaster:
     def send_render_requests(self):
         for renderer in self.renderers.values():
             renderer.send_request()
+        self.send_queue_metrics()
 
     def handle_render_request(self, t, props):
         if not t.is_valid:
@@ -520,6 +523,16 @@ class Queuemaster:
             importance = 'missing'
         self.queue.queue_tile(t, importance, 'request')
 
+    def send_queue_metrics(self):
+        frames = []
+        for queue_name, queue_len in self.queue.get_stats().iteritems():
+            frames.append({
+                'measurement': 'queue',
+                'tags': {'name': str(queue_name)},
+                'fields': {'length': queue_len}
+            })
+        self.influx_client.write_points(frames)
+        
     def quit(self):
         log_message('Exiting.')
         self.channel.basic_cancel()

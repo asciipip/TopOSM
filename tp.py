@@ -85,6 +85,7 @@ def render_tile(t, timeout):
             (method, props, body) = chan.basic_get(queue=queue, no_ack=True)
             if method:
                 return
+            time.sleep(0.1)
     finally:
         conn.close()
 

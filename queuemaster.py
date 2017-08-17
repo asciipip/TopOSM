@@ -39,6 +39,8 @@ MINUTELY_STATE_FILE = '/home/mapnik/updates/state.txt'
 # catches up.
 # Half an hour.
 MAXIMUM_DATABASE_AGE = 30 * 60
+# One month (30 days)
+#MAXIMUM_DATABASE_AGE = 30 * 24 * 60 * 60
 
 def log_message(message):
     console.printMessage(time.strftime('[%Y-%m-%d %H:%M:%S]') + ' ' + message)

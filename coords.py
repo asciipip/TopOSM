@@ -8,6 +8,8 @@ from env import *;
 import mapnik
 from mapnik import Coord, Box2d, Projection
 
+import geohash
+
 __author__      = "Lars Ahlzen"
 __copyright__   = "(c) Lars Ahlzen 2008-2011"
 __license__     = "GPLv2"
@@ -123,6 +125,10 @@ def mercToPixel(coord, z):
     else:
         return GOOGLE_PROJECTION.envLLToPixel(ll, z)
 
+def LLToGeohash(coord):
+    """Converts a Coord(lon,lat) or Box2d(l,b,r,t) to
+    OSM Mercator (x,y)."""
+    return geohash.encode(coord.y, coord.x)
 
 ##### Tile coordinates
 
@@ -164,4 +170,10 @@ def getTileRange(envLL, z, ntiles = 1):
     tltile = getTileAtLL(topleft, z, ntiles)
     brtile = getTileAtLL(bottomright, z, ntiles)
     return (tltile[0], brtile[0], tltile[1], brtile[1])
+
+def getTileGeohash(z, x, y, ntiles = 1):
+    """Returns a Geohash for the given tile."""
+    envLL = getLLTileEnv(z, x, y, ntiles, False)
+    center = Coord((envLL.minx + envLL.maxx) / 2, (envLL.miny + envLL.maxy) / 2)
+    return LLToGeohash(center)
 

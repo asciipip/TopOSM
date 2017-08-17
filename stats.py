@@ -6,6 +6,9 @@ import pickle
 
 import influxdb
 
+from coords import *
+from env import *
+
 class StatsManager:
     lock = lockfile.FileLock('stats')
     def __init__(self):
@@ -15,18 +18,21 @@ class StatsManager:
                 with open('stats', 'w') as f:
                     pickle.dump({}, f)
 
-    def recordRender(self, zoom, totalTime, layerTimes):
+    def recordRender(self, metatile, totalTime, layerTimes):
         with self.lock:
             influx_frames = [{
                 'measurement': 'render',
-                'tags': {'zoom': str(zoom)},
-                'fields': {'render_time': totalTime}
+                'tags': {
+                    'zoom': str(metatile.z),
+                    'geohash': getTileGeohash(metatile.z, metatile.x, metatile.y, NTILES[metatile.z]),
+                },
+                'fields': {'render_time': totalTime, 'z': metatile.z}
             }]
             for layer, layer_time in layerTimes.iteritems():
                 influx_frames.append({
                     'measurement': 'render_layer',
                     'tags': {
-                        'zoom': str(zoom),
+                        'zoom': str(metatile.z),
                         'layer': layer,
                     },
                     'fields': {'render_time': layer_time}
@@ -35,11 +41,11 @@ class StatsManager:
         
             with open('stats', 'r') as f:
                 stats = pickle.load(f)
-            (c, t) = stats.setdefault(zoom, {}).setdefault('total', (0, 0))
-            stats[zoom]['total'] = (c + 1, t + totalTime)
+            (c, t) = stats.setdefault(metatile.z, {}).setdefault('total', (0, 0))
+            stats[metatile.z]['total'] = (c + 1, t + totalTime)
             for layer in layerTimes:
-                (c, t) = stats[zoom].setdefault(layer, (0, 0))
-                stats[zoom][layer] = (c + 1, t + layerTimes[layer])
+                (c, t) = stats[metatile.z].setdefault(layer, (0, 0))
+                stats[metatile.z][layer] = (c + 1, t + layerTimes[layer])
             with open('stats', 'w') as f:
                 pickle.dump(stats, f)
 

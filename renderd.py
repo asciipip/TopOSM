@@ -76,7 +76,7 @@ class ContinuousRenderThread:
             layerTimes = self.runAndLog(message, renderMetaTile, (mt.z, mt.x, mt.y, NTILES[mt.z], self.maps[mt.z]))
             print time.strftime('%Y-%m-%d %H:%M:%S')
         if layerTimes:
-            stats.recordRender(mt.z, time.time() - start_time, layerTimes)
+            stats.recordRender(mt, time.time() - start_time, layerTimes)
         self.printMessage('Notifying queuemaster of completion.')
         self.chan.basic_publish(
             exchange='osm',

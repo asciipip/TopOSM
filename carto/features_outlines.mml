@@ -128,19 +128,7 @@
             "Datasource": {
                 "type": "postgis",
                 "dbname": "osm",
-                "table": "(SELECT (ST_Dump(ST_Union(way))).geom AS way, SUM(way_area) AS way_area FROM planet_osm_polygon WHERE (waterway IN ('riverbank') OR landuse IN ('reservoir') OR \"natural\" IN ('water')) AND ST_IsValid(way) AND way_area > 300000 AND way && !bbox! GROUP BY z_order ORDER BY z_order, way_area DESC) AS water_areas",
-                "extent": "-20037508,-19929239,20037508,19929239"
-            }
-        },
-        {
-            "id": "waterareaoutlines_invalid_z7",
-            "name": "waterareaoutlines_invalid_z7",
-            "class": "waterareaoutlines_z7",
-            "srs": "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over",
-            "Datasource": {
-                "type": "postgis",
-                "dbname": "osm",
-                "table": "(SELECT way, way_area FROM planet_osm_polygon WHERE (waterway IN ('riverbank') OR landuse IN ('reservoir') OR \"natural\" IN ('water')) AND NOT ST_IsValid(way) AND way_area > 300000 ORDER BY z_order, way_area DESC) AS water_areas",
+                "table": "(SELECT way, way_area FROM planet_osm_polygon WHERE (waterway IN ('riverbank') OR landuse IN ('reservoir') OR \"natural\" IN ('water')) AND way_area > 300000 ORDER BY z_order, way_area DESC) AS water_areas",
                 "extent": "-20037508,-19929239,20037508,19929239"
             }
         },

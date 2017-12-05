@@ -165,7 +165,7 @@ if __name__ == "__main__":
     
     conn = pika.BlockingConnection(pika.ConnectionParameters(host=DB_HOST))
     chan = conn.channel()
-    chan.exchange_declare(exchange="osm", type="topic", durable=True, auto_delete=False)
+    chan.exchange_declare(exchange="osm", exchange_type="topic", durable=True, auto_delete=False)
     conn.close()
 
     console.printMessage('Starting renderer.')

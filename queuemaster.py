@@ -414,7 +414,7 @@ class Queuemaster:
     def on_channel_open(self, chan):
         self.channel = chan
         chan.exchange_declare(
-            self.on_exchange_declare, exchange="osm", type="topic",
+            self.on_exchange_declare, exchange="osm", exchange_type="topic",
             durable=True, auto_delete=False)
 
     def on_exchange_declare(self, frame):

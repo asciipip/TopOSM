@@ -46,12 +46,17 @@ def log_message(message):
     console.printMessage(time.strftime('[%Y-%m-%d %H:%M:%S]') + ' ' + message)
 
 def database_age():
-    with open(MINUTELY_STATE_FILE) as state:
-        for line in state:
-            m = re.search('^timestamp=(.*)', line)
-            if m:
-                minutely_timestamp = dateutil.parser.parse(m.group(1).replace('\\', ''))
-                return (datetime.datetime.now(minutely_timestamp.tzinfo) - minutely_timestamp).total_seconds()
+    try:
+        with open(MINUTELY_STATE_FILE) as state:
+            for line in state:
+                m = re.search('^timestamp=(.*)', line)
+                if m:
+                    minutely_timestamp = dateutil.parser.parse(m.group(1).replace('\\', ''))
+                    return (datetime.datetime.now(minutely_timestamp.tzinfo) - minutely_timestamp).total_seconds()
+    except:
+        # Any errors just result in None being returned, same as if we couldn't
+        # find a timestamp line in the file.
+        pass
     return None
 
 
@@ -174,7 +179,8 @@ class Queue:
             try:
                 mt = self.important_stack.pop()
             except IndexError:
-                if database_age() > MAXIMUM_DATABASE_AGE:
+                db_age = database_age()
+                if db_age is None or db_age > MAXIMUM_DATABASE_AGE:
                     return None
                 elif strategy == 'important':
                     return None

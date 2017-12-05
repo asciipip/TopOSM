@@ -539,7 +539,12 @@ class Queuemaster:
                 'tags': {'name': str(queue_name)},
                 'fields': {'length': queue_len}
             })
-        self.influx_client.write_points(frames)
+        try:
+            self.influx_client.write_points(frames)
+        except influxdb.exceptions.InfluxDBServerError, e:
+            log_message('InfluxDB error, reconnecting: {}'.format(e))
+            self.influx_client = influxdb.InfluxDBClient(database='toposm')
+            self.influx_client.write_points(frames)
         
     def quit(self):
         log_message('Exiting.')

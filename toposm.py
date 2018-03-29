@@ -20,6 +20,7 @@ except ImportError:
 
 import mapnik
 from mapnik import Coord, Box2d
+mapnik.logger.set_severity(mapnik.severity_type.Debug)
 
 from env import *
 from coords import *
@@ -308,7 +309,7 @@ def getComposite(images):
     """Composites (stacks) the specified images, in the given order."""
     composite = mapnik.Image(images[0].width(), images[0].height())
     for image in images:
-        composite.blend(0, 0, image, 1.0)
+        composite.composite(image)
     return composite
 
 def getMask(image, mask):

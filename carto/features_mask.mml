@@ -74,7 +74,7 @@
             "Datasource": {
                 "type": "postgis",
                 "dbname": "osm",
-                "table": "(SELECT way, shields_get_single_filename(network, ref, 'cutouts', 20) AS route_shield FROM planet_osm_line WHERE osm_id < 0 AND route = 'road' AND (network = 'US:I' AND char_length(ref) BETWEEN 1 AND 2) ORDER BY ST_Length(way) DESC) AS shields",
+                "table": "(SELECT way, shields_get_single_filename(network, ref) AS route_shield FROM planet_osm_line WHERE osm_id < 0 AND route = 'road' AND (network = 'US:I' AND char_length(ref) BETWEEN 1 AND 2) ORDER BY ST_Length(way) DESC) AS shields",
                 "extent": "-20037508,-19929239,20037508,19929239"
             }
         },
@@ -85,29 +85,18 @@
             "Datasource": {
                 "type": "postgis",
                 "dbname": "osm",
-                "table": "(SELECT way, highway, ref, char_length(ref) AS length, shields_get_filename(osm_id, way, 'cutouts', 20) AS route_shield FROM planet_osm_roads WHERE highway IN ('motorway', 'trunk', 'primary', 'secondary') AND ((ref IS NOT NULL AND char_length(ref) BETWEEN 1 AND 8) OR shields_get_route_memberships(osm_id) IS NOT NULL)) AS shields",
+                "table": "(SELECT way, highway, ref, char_length(ref) AS length, shields_get_filename(osm_id, way) AS route_shield FROM planet_osm_roads WHERE highway IN ('motorway', 'trunk', 'primary', 'secondary') AND ((ref IS NOT NULL AND char_length(ref) BETWEEN 1 AND 8) OR shields_get_route_memberships(osm_id) IS NOT NULL)) AS shields",
                 "extent": "-20037508,-19929239,20037508,19929239"
             }
         },
         {
-            "id": "shields-20px",
-            "name": "shields-20px",
+            "id": "shields",
+            "name": "shields",
             "srs": "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over",
             "Datasource": {
                 "type": "postgis",
                 "dbname": "osm",
-                "table": "(SELECT way, highway, ref, char_length(ref) as length, shields_get_filename(osm_id, way, 'cutouts', 20) route_shield FROM planet_osm_line WHERE highway IS NOT NULL AND ((ref IS NOT NULL AND char_length(ref) BETWEEN 1 AND 8) OR shields_get_route_memberships(osm_id) IS NOT NULL)) AS shields",
-                "extent": "-20037508,-19929239,20037508,19929239"
-            }
-        },
-        {
-            "id": "shields-24px",
-            "name": "shields-24px",
-            "srs": "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over",
-            "Datasource": {
-                "type": "postgis",
-                "dbname": "osm",
-                "table": "(SELECT way, highway, ref, char_length(ref) as length, shields_get_filename(osm_id, way, 'cutouts', 24) route_shield FROM planet_osm_line WHERE highway IS NOT NULL AND ((ref IS NOT NULL AND char_length(ref) BETWEEN 1 AND 8) OR shields_get_route_memberships(osm_id) IS NOT NULL)) AS shields",
+                "table": "(SELECT way, highway, ref, char_length(ref) as length, shields_get_filename(osm_id, way) route_shield FROM planet_osm_line WHERE highway IS NOT NULL AND ((ref IS NOT NULL AND char_length(ref) BETWEEN 1 AND 8) OR shields_get_route_memberships(osm_id) IS NOT NULL)) AS shields",
                 "extent": "-20037508,-19929239,20037508,19929239"
             }
         },

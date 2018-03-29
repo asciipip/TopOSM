@@ -132,11 +132,12 @@ Map {
 
 #shields-very-low-zoom {
     [zoom >= 7][zoom < 10] {
-        shield-file: url('/srv/shields/[route_shield]');
+        shield-file: url('[route_shield]');
         shield-face-name: @bold-fonts;
         shield-placement: line;
         shield-min-distance: 35;
         shield-spacing: 500;
+        shield-transform: 'scale(0.8333)';
     }
 }
 
@@ -156,34 +157,18 @@ Map {
         shield-dy: -1;
         [route_shield != ''] {
             shield-name: '';
-            shield-file: url('/srv/shields/[route_shield]');
+            shield-file: url('[route_shield]');
+            shield-transform: 'scale(0.8333)';
         }
     }
 }
 
-#shields-20px {
-    [zoom >= 13][zoom < 15][highway = 'motorway'],
-    [zoom >= 13][zoom < 15][highway = 'trunk'],
-    [zoom >= 13][zoom < 15][highway = 'primary'],
-    [zoom >= 13][zoom < 15][highway = 'secondary'],
-    [zoom >= 13][zoom < 15][highway = 'tertiary'] {
-        shield-name: [ref];
-        shield-file: url('custom-symbols/shield-black-[length].png');
-        shield-face-name: @bold-fonts;
-        shield-placement: line;
-        shield-min-distance: 35;
-        shield-spacing: 500;
-        shield-size: 10;
-        shield-fill: white;
-        shield-dy: -1;
-        [route_shield != ''] {
-            shield-name: '';
-            shield-file: url('/srv/shields/[route_shield]');
-        }
-    }
-}
-
-#shields-24px {
+#shields {
+    [zoom >= 13][highway = 'motorway'],
+    [zoom >= 13][highway = 'trunk'],
+    [zoom >= 13][highway = 'primary'],
+    [zoom >= 13][highway = 'secondary'],
+    [zoom >= 13][highway = 'tertiary'],
     [zoom >= 15] {
         shield-name: [ref];
         shield-file: url('custom-symbols/shield-black-[length].png');
@@ -191,12 +176,14 @@ Map {
         shield-placement: line;
         shield-min-distance: 35;
         shield-spacing: 500;
-        shield-size: 10;
         shield-fill: white;
         shield-dy: -1;
         [route_shield != ''] {
             shield-name: '';
-            shield-file: url('/srv/shields/[route_shield]');
+            shield-file: url('[route_shield]');
+            [zoom >= 13][zoom < 15] {
+                shield-transform: 'scale(0.8333)';
+            }
         }
     }
 }

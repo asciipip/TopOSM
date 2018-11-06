@@ -436,6 +436,8 @@ class Queuemaster:
     def on_expire_bind(self,frame):
         self.channel.basic_consume(self.on_expire, queue='expire_toposm',
                                    exclusive=True, no_ack=True)
+        self.channel.add_on_cancel_callback(self.on_cancel)
+        self.channel.add_on_close_callback(self.on_close)
         self.initializer = QueueFiller(self.maxz, self.queue)
         self.initializer.start()
     
@@ -456,6 +458,14 @@ class Queuemaster:
                                    routing_key='command.toposm',
                                    body=json.dumps({'command': 'queuemaster online'}))
 
+    def on_cancel(self, frame):
+        log_message('AMQP cancelled: {}'.format(frame))
+
+    def on_close(self, channel, reply_code, reply_text):
+        log_message('AMQP closed channel {}: {} ({})'.format(channel, reply_code, reply_text))
+        self.connection = pika.SelectConnection(
+            pika.ConnectionParameters(host=DB_HOST), self.on_connection_open)
+        self.connection.ioloop.start()
 
     ### AMQP commands.
     
@@ -544,7 +554,8 @@ class Queuemaster:
         except influxdb.exceptions.InfluxDBServerError, e:
             log_message('InfluxDB error, reconnecting: {}'.format(e))
             self.influx_client = influxdb.InfluxDBClient(database='toposm')
-            self.influx_client.write_points(frames)
+            time.sleep(1)
+            self.send_queue_metrics()
         
     def quit(self):
         log_message('Exiting.')

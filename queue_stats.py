@@ -94,4 +94,6 @@ while not result_received:
             print ''
             print_stats(message)
             result_received = True
+    else:
+        time.sleep(0.1)
 conn.close()

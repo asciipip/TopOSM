@@ -18,6 +18,7 @@ class ConsoleManager:
     def printMessage(self, message):
         ConsoleManager.lock.acquire()
         print message
+        sys.stdout.flush()
         ConsoleManager.lock.release()
     def debugMessage(self, message):
         if TOPOSM_DEBUG:

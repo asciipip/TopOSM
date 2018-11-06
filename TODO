@@ -1,7 +1,4 @@
-
-* dequeue by age
-
-* Consider time to render in by_work dequeue strategy.
+* Consider time to render in by_work dequeue strategy?
 
 * Tile proxy enhancements
    - Persistent process to avoid start-up times.
@@ -9,3 +6,14 @@
    - Record last-served date for tiles so as to expire unaccessed tiles.
 
 * commands to force expiration of tiles in queuemaster
+
+* Rendering enhancements
+   
+   - Dashed line for intermittent waterways
+
+   - Water-carrying pipelines should be blue
+
+   - Use empty dashed outlines for roads under construction
+
+   - Arrows or other indicators for one-way streets
+

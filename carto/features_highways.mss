@@ -267,8 +267,8 @@
         [zoom >= 14] {
             line-color: black;
             line-dasharray: 5,2;
-            [zoom >= 14][zoom < 16] { line-width: 4.0; }
-            [zoom >= 16]            { line-width: 7.0; }
+            [zoom >= 14][zoom < 16] { line-width: 2 * @highzoom-outline-tier4 + @z14-tier4; }
+            [zoom >= 16]            { line-width: 2 * @highzoom-outline-tier4 + @z16-tier4; }
         }
     }
 
@@ -367,8 +367,7 @@
     [zoom >= 14][highway = 'unclassified'],
     [zoom >= 14][highway = 'residential'],
     [zoom >= 14][highway = 'unsurfaced'],
-    [zoom >= 14][highway = 'unimproved'],
-    [zoom >= 14][highway = 'track'][bicycle != 'designated'] {
+    [zoom >= 14][highway = 'unimproved'] {
         line-join: round;
         line-cap: round;
         line-color: @smallroadcolor;
@@ -377,7 +376,8 @@
         [zoom >= 16]            { line-width: @z16-tier3; }
     }
 
-    [zoom >= 14][highway = 'service'] {
+    [zoom >= 14][highway = 'service'],
+    [zoom >= 14][highway = 'track'][bicycle != 'designated'] {
         line-join: round;
         line-cap: round;
         line-color: @smallroadcolor;
@@ -423,27 +423,51 @@
 #turning-circles-outlines {
     [int_tc_type = 'tertiary'] {
         [zoom >= 15][zoom < 16] {
-            point-file: url('custom-symbols/turning_circle-tertiary-z15-casing.png');
+            marker-line-width: 0;
+            marker-width:  2 * @highzoom-outline-tier2 + 3 * @z14-tier2;
+            marker-height: 2 * @highzoom-outline-tier2 + 3 * @z14-tier2;
+            marker-fill: black;
+            marker-allow-overlap: true;
         }
         [zoom >= 16] {
-            point-file: url('custom-symbols/turning_circle-tertiary-z16-casing.png');
+            marker-line-width: 0;
+            marker-width:  2 * @highzoom-outline-tier2 + 3 * @z16-tier2;
+            marker-height: 2 * @highzoom-outline-tier2 + 3 * @z16-tier2;
+            marker-fill: black;
+            marker-allow-overlap: true;
         }
     }
     [int_tc_type = 'unclassified'],
     [int_tc_type = 'residential'] {
         [zoom >= 15][zoom < 16] {
-            point-file: url('custom-symbols/turning_circle-minor-z15-casing.png');
+            marker-line-width: 0;
+            marker-width:  2 * @highzoom-outline-tier3 + 3 * @z14-tier3;
+            marker-height: 2 * @highzoom-outline-tier3 + 3 * @z14-tier3;
+            marker-fill: black;
+            marker-allow-overlap: true;
         }
         [zoom >= 16] {
-            point-file: url('custom-symbols/turning_circle-minor-z16-casing.png');
+            marker-line-width: 0;
+            marker-width:  2 * @highzoom-outline-tier3 + 3 * @z16-tier3;
+            marker-height: 2 * @highzoom-outline-tier3 + 3 * @z16-tier3;
+            marker-fill: black;
+            marker-allow-overlap: true;
         }
     }
     [int_tc_type = 'service'] {
         [zoom >= 15][zoom < 16] {
-            point-file: url('custom-symbols/turning_circle-service-z15-casing.png');
+            marker-line-width: 0;
+            marker-width:  2 * @highzoom-outline-tier4 + 3 * @z14-tier4;
+            marker-height: 2 * @highzoom-outline-tier4 + 3 * @z14-tier4;
+            marker-fill: black;
+            marker-allow-overlap: true;
         }
         [zoom >= 16] {
-            point-file: url('custom-symbols/turning_circle-service-z16-casing.png');
+            marker-line-width: 0;
+            marker-width:  2 * @highzoom-outline-tier4 + 3 * @z16-tier4;
+            marker-height: 2 * @highzoom-outline-tier4 + 3 * @z16-tier4;
+            marker-fill: black;
+            marker-allow-overlap: true;
         }
     }
 }
@@ -451,27 +475,51 @@
 #turning-circles-fills {
     [int_tc_type = 'tertiary'] {
         [zoom >= 15][zoom < 16] {
-            point-file: url('custom-symbols/turning_circle-tertiary-z15-fill.png');
+            marker-line-width: 0;
+            marker-width:  3 * @z14-tier2;
+            marker-height: 3 * @z14-tier2;
+            marker-fill: @smallroadcolor;
+            marker-allow-overlap: true;
         }
         [zoom >= 16] {
-            point-file: url('custom-symbols/turning_circle-tertiary-z16-fill.png');
+            marker-line-width: 0;
+            marker-width:  3 * @z16-tier2;
+            marker-height: 3 * @z16-tier2;
+            marker-fill: @smallroadcolor;
+            marker-allow-overlap: true;
         }
     }
     [int_tc_type = 'unclassified'],
     [int_tc_type = 'residential'] {
         [zoom >= 15][zoom < 16] {
-            point-file: url('custom-symbols/turning_circle-minor-z15-fill.png');
+            marker-line-width: 0;
+            marker-width:  3 * @z14-tier3;
+            marker-height: 3 * @z14-tier3;
+            marker-fill: @smallroadcolor;
+            marker-allow-overlap: true;
         }
         [zoom >= 16] {
-            point-file: url('custom-symbols/turning_circle-minor-z16-fill.png');
+            marker-line-width: 0;
+            marker-width:  3 * @z16-tier3;
+            marker-height: 3 * @z16-tier3;
+            marker-fill: @smallroadcolor;
+            marker-allow-overlap: true;
         }
     }
     [int_tc_type = 'service'] {
         [zoom >= 15][zoom < 16] {
-            point-file: url('custom-symbols/turning_circle-service-z15-fill.png');
+            marker-line-width: 0;
+            marker-width:  3 * @z14-tier4;
+            marker-height: 3 * @z14-tier4;
+            marker-fill: @smallroadcolor;
+            marker-allow-overlap: true;
         }
         [zoom >= 16] {
-            point-file: url('custom-symbols/turning_circle-service-z16-fill.png');
+            marker-line-width: 0;
+            marker-width:  3 * @z16-tier4;
+            marker-height: 3 * @z16-tier4;
+            marker-fill: @smallroadcolor;
+            marker-allow-overlap: true;
         }
     }
 }

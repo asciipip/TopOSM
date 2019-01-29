@@ -27,7 +27,7 @@
 @road-fill-z14-tier1: 7.0;
 @road-fill-z14-tier2: 3.5;
 @road-fill-z14-tier3: 2.0;
-@road-fill-z14-tier4: 1.3;
+@road-fill-z14-tier4: 1.5;
 @road-fill-z14-link:  2.0;
 @road-fill-z16-tier1: 10;
 @road-fill-z16-tier2:  8;
@@ -42,5 +42,5 @@
 @road-outline-z12-tier1: 1.25;
 @road-outline-z12-tier2: 1.00;
 @road-outline-z12-tier3: 1.00;
-@road-outline-z12-tier4: 1.00;
+@road-outline-z12-tier4: 0.75;
 @road-outline-z12-link:  1.00;

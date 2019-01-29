@@ -413,6 +413,7 @@ def printSyntax():
     print "Syntax:"
     print " toposm.py pdf <area> <filename> <sizeX> <sizeY>"
     print " toposm.py png <area> <filename> <sizeX> <sizeY>"
+    print " toposm.py png-zoom <lon> <lat> <zoom> <filename> <sizeX> <sizeY>"
     print " toposm.py prep <area(s)>"
     print " toposm.py info"
     print "Areas are named entities in areas.py."
@@ -432,6 +433,18 @@ if __name__ == "__main__":
           renderToPdf(env, filename, sizex, sizey)
         elif cmd == 'png':
           renderToPng(env, filename, sizex, sizey)
+    elif cmd == 'png-zoom':
+        lon = float(sys.argv[2])
+        lat = float(sys.argv[3])
+        zoom = int(sys.argv[4])
+        filename = sys.argv[5]
+        sizex = int(sys.argv[6])
+        sizey = int(sys.argv[7])
+        center_px = LLToPixel(Coord(lon, lat), zoom)
+        env = pixelToLL(Box2d(center_px.x - sizex / 2, center_px.y - sizey / 2,
+                              center_px.x + sizex / 2, center_px.y + sizey / 2),
+                        zoom)
+        renderToPng(env, filename, sizex, sizey)
     elif cmd == 'prep':
         areaname = sys.argv[2]
         env = vars(areas)[areaname]

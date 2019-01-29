@@ -277,7 +277,7 @@
         line-join: round;
         line-cap: round;
         line-color: @trunkcolor;
-        [tunnel = 'yes'] { line-color: @trunkcolor; }
+        [tunnel = 'yes'] { line-color: @trunkcolortunnel; }
         [zoom >=  9][zoom < 12] { line-width: @road-fill-z9-tier1; }
         [zoom >= 12][zoom < 14] { line-width: @road-fill-z12-tier1; }
         [zoom >= 14][zoom < 16] { line-width: @road-fill-z14-tier1; }

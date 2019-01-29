@@ -24,19 +24,19 @@
 @tunneloutlinecolor: #000;
 @lightrailcolor: #666;
 @interstatecolor: #93A4FF;
-@interstatecolortunnel: #9FA9DA;
+@interstatecolortunnel: #BAC4F6;
 @interstatecolorlowzoom: #4D5A9A;
 @trunkcolor: #FF8584;
-@trunkcolortunnel: #D99C9C;
+@trunkcolortunnel: #F6B7B7;
 @trunkcolorlowzoom: #934748;
 @primarycolor: #FFD98F;
-@primarycolortunnel: #FADEBA;
+@primarycolortunnel: #FFEDC8;
 @primarycolorlowzoom: #442C00;
 @secondarycolor: #E8E96A;
-@secondarycolortunnel: #E6E6A8;
+@secondarycolortunnel: #F4F4B5;
 @secondarycolorlowzoom: #303400;
-@smallroadcolor: #E3E2E2;
-@smallroadcolortunnel: #E3E2E2;
+@smallroadcolor: #E2E2E2;
+@smallroadcolortunnel: #F1F1F1;
 @smallroadcolorlowzoom: #303030;
 @parkingcolor: #E7E3C8;
 

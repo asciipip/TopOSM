@@ -12,7 +12,7 @@ contour-mask.xml: carto/contour-mask.mml carto/halo-colors.mss carto/fonts.mss c
 contours.xml: carto/contours.mml carto/colors.mss carto/fonts.mss carto/contours.mss
 	cd carto; carto contours.mml >../contours.xml
 
-features_fills.xml: carto/features_fills.mml carto/colors.mss carto/fonts.mss carto/features_fills.mss carto/features_highways.mss carto/features_railways.mss carto/features_aeroways.mss
+features_fills.xml: carto/features_fills.mml carto/colors.mss carto/sizes.mss carto/fonts.mss carto/features_fills.mss carto/features_highways.mss carto/features_railways.mss carto/features_aeroways.mss
 	cd carto; carto features_fills.mml >../features_fills.xml
 
 features_labels.xml: carto/features_labels.mml carto/colors.mss carto/fonts.mss carto/features_labels.mss
@@ -21,7 +21,7 @@ features_labels.xml: carto/features_labels.mml carto/colors.mss carto/fonts.mss 
 features_mask.xml: carto/features_mask.mml carto/halo-colors.mss carto/fonts.mss carto/features_labels.mss
 	cd carto; carto features_mask.mml >../features_mask.xml
 
-features_outlines.xml: carto/features_outlines.mml carto/colors.mss carto/fonts.mss carto/ocean.mss carto/features_outlines.mss carto/features_water.mss carto/features_pipelines.mss carto/features_borders.mss carto/features_highways.mss carto/features_railways.mss carto/features_aeroways.mss
+features_outlines.xml: carto/features_outlines.mml carto/colors.mss carto/sizes.mss carto/fonts.mss carto/ocean.mss carto/features_outlines.mss carto/features_water.mss carto/features_pipelines.mss carto/features_borders.mss carto/features_highways.mss carto/features_railways.mss carto/features_aeroways.mss
 	cd carto; carto features_outlines.mml >../features_outlines.xml
 
 features_top.xml: carto/features_top.mml carto/colors.mss carto/fonts.mss carto/features_top.mss carto/features_borders.mss

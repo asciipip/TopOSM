@@ -27,6 +27,22 @@
     }
 }
 
+#trail-colors {
+    [zoom >= 15] {
+        [highway = 'path'],
+        [highway = 'trail'],
+        [highway = 'footway'],
+        [highway = 'steps'],
+        [highway = 'pedestrian'],
+        [route = 'hiking'] {
+            [zoom >= 15][zoom < 16] { line-width: 4.5; }
+            [zoom >= 16]            { line-width: 6.0; }
+            line-color: [colour];
+            line-join: round;
+        }
+    }
+}
+
 #highway-outlines {
     [zoom >= 9][highway = 'motorway'],
     [zoom >= 9][highway = 'trunk'] {
@@ -254,6 +270,11 @@
             [tunnel != 'yes'] { line-dasharray: 3,2; }
         }
         [zoom >= 15] {
+            /* Invert color if we know it's going onto a dark background. */
+            [colour = 'black'],
+            [colour = '#000000'] {
+                line-color: white;
+            }
             line-width: 1.5;
             [tunnel =  'yes'] { line-dasharray: 0,7,4,3; }
             [tunnel != 'yes'] { line-dasharray: 4,3; }

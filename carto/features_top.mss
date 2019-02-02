@@ -4,79 +4,11 @@ Map {
     background-color: transparent;
 }
 
-#bridges {
+.bridges {
     /* NOTE: These must be in the same style as highway fills, since they are
      * often drawn "inbetween" different level roads.  Outlines at the same
      * level will draw before fills, however, thanks to "pass".
      */
-
-    [zoom >= 14][waterway = 'river'],
-    [zoom >= 14][waterway = 'canal'][disused != 'yes'] {
-        [pass = 1] {
-            line-width: 8.0;
-            line-color: black;
-            line-opacity: @bridgeopacity;
-            line-cap: butt;
-        }
-        [pass = 2] {
-            line-color: @waterfillcolor;
-            line-width: 2;
-            line-join: round;
-            line-cap: round;
-        }
-    }
-    [zoom >= 14][waterway = 'derelict_canal'],
-    [zoom >= 14][waterway = 'canal'][disused = 'yes'] {
-        [pass = 1] {
-            line-width: 5.0;
-            line-color: black;
-            line-opacity: @bridgeopacity;
-            line-cap: butt;
-        }
-        [pass = 2] {
-            line-color: @waterlinecolor;
-            line-join: round;
-            line-cap: round;
-            [zoom >= 14][zoom < 15] {
-                line-width: 2;
-                line-dasharray: 15,5;
-            }
-            [zoom >= 15] {
-                line-width: 2;
-                line-dasharray: 30,10;
-            }
-        }
-    }
-    [zoom >= 14][waterway = 'stream'] {
-        [pass = 1] {
-            line-width: 4.5;
-            line-color: black;
-            line-opacity: @bridgeopacity;
-            line-cap: butt;
-        }
-        [pass = 2] {
-            line-color: @waterlinecolor;
-            line-join: round;
-            line-cap: round;
-            line-width: 1.5;
-        }
-    }
-    [zoom >= 14][waterway = 'ditch'],
-    [zoom >= 14][waterway = 'drain'],
-    [zoom >= 14][waterway = 'brook'] {
-        [pass = 1] {
-            line-width: 2.5;
-            line-color: black;
-            line-opacity: @bridgeopacity;
-            line-cap: butt;
-        }
-        [pass = 2] {
-            line-color: @waterlinecolor;
-            line-join: round;
-            line-cap: round;
-            line-width: 0.8;
-        }
-    }
 
     [zoom >= 14][highway = 'motorway'],
     [zoom >= 14][highway = 'trunk'],
@@ -177,7 +109,9 @@ Map {
             [zoom >= 16]            { line-width: @road-fill-z16-tier4; }
         }
     }
+}
 
+.path-bridges {
     [zoom >= 14][highway = 'path'],
     [zoom >= 14][highway = 'trail'],
     [zoom >= 14][highway = 'footway'],
@@ -191,11 +125,26 @@ Map {
             line-color: black;
             line-opacity: @bridgeopacity;
             line-cap: butt;
-            [zoom >= 14][zoom < 15] { line-width:  2.5; }
+            [zoom >= 14][zoom < 15] { line-width:  3.0; }
             [zoom >= 15]            { line-width:  4.0; }
+            [colour =~ '^([a-z]+|#[0-9a-f]{6})$'] {
+                [zoom >= 14][zoom < 16] { line-width:  7.0; }
+                [zoom >= 16]            { line-width:  8.5; }
+            }
         }
-        [pass = 2] {
+        [pass = 2][colour =~ '^([a-z]+|#[0-9a-f]{6})$'][zoom >= 15] {
+            line-join: round;
+            line-cap: round;
+            line-color: [colour];
+            [zoom >= 15][zoom < 16] { line-width: 4.5; }
+            [zoom >= 16]            { line-width: 6.0; }
+        }
+        [pass = 3] {
             line-color: black;
+            [colour = 'black'][zoom >= 15],
+            [colour = '#000000'][zoom >= 15] {
+                line-color: white;
+            }
             [highway = 'cycleway'],
             [highway = 'bikeway'],
             [highway = 'bridleway'],
@@ -213,7 +162,79 @@ Map {
             }
         }
     }
+}
 
+.water-bridges {
+    [zoom >= 14][waterway = 'river'],
+    [zoom >= 14][waterway = 'canal'][disused != 'yes'] {
+        [pass = 1] {
+            line-width: 8.0;
+            line-color: black;
+            line-opacity: @bridgeopacity;
+            line-cap: butt;
+        }
+        [pass = 2] {
+            line-color: @waterfillcolor;
+            line-width: 2;
+            line-join: round;
+            line-cap: round;
+        }
+    }
+    [zoom >= 14][waterway = 'derelict_canal'],
+    [zoom >= 14][waterway = 'canal'][disused = 'yes'] {
+        [pass = 1] {
+            line-width: 5.0;
+            line-color: black;
+            line-opacity: @bridgeopacity;
+            line-cap: butt;
+        }
+        [pass = 2] {
+            line-color: @waterlinecolor;
+            line-join: round;
+            line-cap: round;
+            [zoom >= 14][zoom < 15] {
+                line-width: 2;
+                line-dasharray: 15,5;
+            }
+            [zoom >= 15] {
+                line-width: 2;
+                line-dasharray: 30,10;
+            }
+        }
+    }
+    [zoom >= 14][waterway = 'stream'] {
+        [pass = 1] {
+            line-width: 4.5;
+            line-color: black;
+            line-opacity: @bridgeopacity;
+            line-cap: butt;
+        }
+        [pass = 2] {
+            line-color: @waterlinecolor;
+            line-join: round;
+            line-cap: round;
+            line-width: 1.5;
+        }
+    }
+    [zoom >= 14][waterway = 'ditch'],
+    [zoom >= 14][waterway = 'drain'],
+    [zoom >= 14][waterway = 'brook'] {
+        [pass = 1] {
+            line-width: 2.5;
+            line-color: black;
+            line-opacity: @bridgeopacity;
+            line-cap: butt;
+        }
+        [pass = 2] {
+            line-color: @waterlinecolor;
+            line-join: round;
+            line-cap: round;
+            line-width: 0.8;
+        }
+    }
+}
+
+.rail-bridges {
     [zoom >= 14][railway = 'rail'],
     [zoom >= 14][railway = 'preserved'],
     [zoom >= 14][railway = 'disused'],
@@ -227,20 +248,30 @@ Map {
         }
         [pass = 2] {
             line-color: black;
-            b/line-color: white;
-            [railway = 'abandoned'],
-            [railway = 'disused'] { b/line-color: #999; }
             [zoom >= 14][zoom < 15] {
-                line-width: 0.9; b/line-width: 0.9;
-                [service = 'spur'] { line-width: 0.5; b/line-width: 0.5; }
-                b/line-dasharray: 4,4;
-                [railway = 'preserved'] { b/line-dasharray: 4,1; }
+                line-width: 0.9;
+                [service = 'spur'] { line-width: 0.5; }
             }
             [zoom >= 15] {
-                line-width: 2.0; b/line-width: 2.0;
-                [service = 'spur'] { line-width: 1.5; b/line-width: 1.5; }
-                b/line-dasharray: 10,10;
-                [railway = 'preserved'] { b/line-dasharray: 0,1,8,1; }
+                line-width: 2.0;
+                [service = 'spur'] { line-width: 1.5; }
+            }
+        }
+        [pass = 3] {
+            line-color: white;
+            [railway = 'abandoned'],
+            [railway = 'disused'] { line-color: #999; }
+            [zoom >= 14][zoom < 15] {
+                line-width: 0.9;
+                [service = 'spur'] { line-width: 0.5; }
+                line-dasharray: 4,4;
+                [railway = 'preserved'] { line-dasharray: 4,1; }
+            }
+            [zoom >= 15] {
+                line-width: 2.0;
+                [service = 'spur'] { line-width: 1.5; }
+                line-dasharray: 10,10;
+                [railway = 'preserved'] { line-dasharray: 0,1,8,1; }
             }
         }
     }

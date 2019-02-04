@@ -357,7 +357,7 @@
             "Datasource": {
                 "type": "postgis",
                 "dbname": "osm",
-                "table": "(SELECT way, route, highway, tunnel, bicycle, lower(colour) AS colour FROM planet_osm_line WHERE (highway IS NOT NULL OR type = 'route' AND route = 'hiking') AND colour ~* '^([a-z]+|#[0-9a-f]{6})$' ORDER BY FLOOR(z_order / 10.0), z_order) AS lines",
+                "table": "(SELECT way, route, highway, tunnel, bicycle, lower(colour) AS colour FROM planet_osm_line WHERE (highway IS NOT NULL OR type = 'route' AND route = 'hiking') AND colour ~* '^(#[0-9a-f]{6}|white|silver|gray|black|red|maroon|yellow|olive|lime|green|aqua|teal|blur|navy|fuchsia|purple)$' ORDER BY FLOOR(z_order / 10.0), z_order) AS lines",
                 "extent": "-20037508,-19929239,20037508,19929239"
             }
         },

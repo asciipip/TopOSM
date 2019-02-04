@@ -127,12 +127,12 @@ Map {
             line-cap: butt;
             [zoom >= 14][zoom < 15] { line-width:  3.0; }
             [zoom >= 15]            { line-width:  4.0; }
-            [colour =~ '^([a-z]+|#[0-9a-f]{6})$'] {
+            [colour =~ '^(#[0-9a-f]{6}|white|silver|gray|black|red|maroon|yellow|olive|lime|green|aqua|teal|blur|navy|fuchsia|purple)$'] {
                 [zoom >= 14][zoom < 16] { line-width:  7.0; }
                 [zoom >= 16]            { line-width:  8.5; }
             }
         }
-        [pass = 2][colour =~ '^([a-z]+|#[0-9a-f]{6})$'][zoom >= 15] {
+        [pass = 2][colour =~ '^(#[0-9a-f]{6}|white|silver|gray|black|red|maroon|yellow|olive|lime|green|aqua|teal|blur|navy|fuchsia|purple)$'][zoom >= 15] {
             line-join: round;
             line-cap: round;
             line-color: [colour];

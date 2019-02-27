@@ -58,6 +58,7 @@ Map {
     [zoom >= 10][natural = 'heath'],
     [zoom >= 10][landuse = 'meadow'],
     [zoom >= 10][landuse = 'farm'],
+    [zoom >= 10][landuse = 'farmland'],
     [zoom >= 10][landuse = 'farmyard'] {
         polygon-fill: #dd3;
         polygon-opacity: @areaopacity;

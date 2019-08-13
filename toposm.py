@@ -14,9 +14,9 @@ from subprocess import call
 
 # PyPdf is optional, but render-to-pdf won't work without it.
 try:
-    from pyPdf import PdfFileWriter, PdfFileReader
+    from PyPDF2 import PdfFileWriter, PdfFileReader
 except ImportError:
-    print "WARNING: PyPdf not found. Render to PDF will not work."
+    print "WARNING: PyPdf2 not found. Render to PDF will not work."
 
 import mapnik
 from mapnik import Coord, Box2d

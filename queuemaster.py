@@ -470,7 +470,8 @@ class Queuemaster:
     ### AMQP commands.
     
     def on_expire(self, chan, method, props, body):
-        self.expirer.add_expired(Tile.fromstring(body))
+        for tile_str in body.split(';'):
+            self.expirer.add_expired(Tile.fromstring(tile_str))
 
     def on_command(self, chan, method, props, body):
         try:

@@ -1,3 +1,4 @@
+/* -*- css -*- */
 #pipelines {
     ::main[zoom >= 13] {
         line-color: @pipelinecolor;

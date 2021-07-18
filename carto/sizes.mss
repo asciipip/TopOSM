@@ -1,3 +1,4 @@
+/* -*- css -*- */
 // Low zoom: motorway; trunk; primary
 // Note that all of these are dark lines only.
 @road-fill-z5-tier1: 0.8;

@@ -1,3 +1,4 @@
+/* -*- css -*- */
 #waterlines {
     ::mainline {
         // rivers/canals

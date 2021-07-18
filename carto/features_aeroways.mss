@@ -1,3 +1,4 @@
+/* -*- css -*- */
 .aeroway-outlines {
     [zoom >= 14][aeroway = 'runway'] {
         line-color: @aerowayoutlinecolor;

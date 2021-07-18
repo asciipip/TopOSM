@@ -1,3 +1,4 @@
+/* -*- css -*- */
 Map {
     background-color: @mapcolor;
 }

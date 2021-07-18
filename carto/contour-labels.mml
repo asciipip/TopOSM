@@ -1,51 +1,45 @@
-{
-    "bounds": [
-        -180,
-        -85.05112877980659,
-        180,
-        85.05112877980659
-    ],
-    "center": [
-        0,
-        0,
-        4
-    ],
-    "format": "png",
-    "interactivity": false,
-    "minzoom": 0,
-    "maxzoom": 22,
-    "srs": "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over",
-    "Stylesheet": [
-        "colors.mss",
-        "fonts.mss",
-        "contour-labels.mss"
-    ],
-    "Layer": [
-        {
-            "id": "contours-medium",
-            "name": "contours-medium",
-            "srs": "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +no_defs +over",
-            "Datasource": {
-                "type": "postgis",
-                "dbname": "ned",
-                "table": "(SELECT ele_ft, wkb_geometry FROM contours WHERE ele_ft % 200 = 0) AS contours",
-                "extent": "-20037508,-19929239,20037508,19929239"
-            }
-        },
-        {
-            "id": "contours-high",
-            "name": "contours-high",
-            "srs": "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +no_defs +over",
-            "Datasource": {
-                "type": "postgis",
-                "dbname": "ned",
-                "table": "(SELECT ele_ft, wkb_geometry FROM contours WHERE ele_ft % 100 = 0) AS contours",
-                "extent": "-20037508,-19929239,20037508,19929239"
-            }
-        }
-    ],
-    "scale": 1,
-    "metatile": 2,
-    "name": "TopOSM Contour Labels",
-    "description": "Contour labels layer for TopOSM."
-}
+# -*- yaml -*-
+name: TopOSM Contour Labels
+description: Contour labels layer for TopOSM.
+scale: 1
+metatile: 2
+bounds:
+  - -180
+  - -85.05112877980659
+  - 180
+  - 85.05112877980659
+center:
+  - 0
+  - 0
+  - 4
+format: png
+interactivity: false
+minzoom: 0
+maxzoom: 22
+srs: &srs +proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over
+
+Stylesheet:
+  - colors.mss
+  - fonts.mss
+  - contour-labels.mss
+
+_parts:
+  ned: &ned
+    type: postgis
+    dbname: ned
+    port: 5433
+    extent: -20037508,-19929239,20037508,19929239
+  
+Layer:
+  - id: contours-medium
+    name: contours-medium
+    srs: *srs
+    Datasource:
+      <<: *ned
+      table: (SELECT ele_ft, wkb_geometry FROM contours WHERE ele_ft % 200 = 0) AS contours
+  - id: contours-high
+    name: contours-high
+    srs: *srs
+    Datasource:
+      <<: *ned
+      table: (SELECT ele_ft, wkb_geometry FROM contours WHERE ele_ft % 100 = 0) AS contours

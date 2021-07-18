@@ -1,3 +1,4 @@
+/* -*- css -*- */
 #protected-land {
     polygon-fill: @naturecolorlight;
     polygon-opacity: 0.05;

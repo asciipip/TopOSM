@@ -1,3 +1,4 @@
+/* -*- css -*- */
 #highway-lowzoom {
     [zoom >= 5][zoom < 9][highway = 'motorway'] {
         line-color: @interstatecolorlowzoom;

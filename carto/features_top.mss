@@ -1,3 +1,4 @@
+/* -*- css -*- */
 @bridgeopacity: 0.6;
 
 Map {

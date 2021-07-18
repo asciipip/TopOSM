@@ -1,3 +1,4 @@
+/* -*- css -*- */
 @mapcolor: white;
 @halocolor: black;
 @contourcolor: black;

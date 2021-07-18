@@ -1,3 +1,4 @@
+/* -*- css -*- */
 @landcolor: #999;
 @builtupcolor: #444;
 @naturecolor: #7e5;

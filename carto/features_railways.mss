@@ -1,3 +1,4 @@
+/* -*- css -*- */
 #railway-outlines {
     // Heavy rail.
     [zoom >= 10][railway = 'rail'][service != 'spur'],

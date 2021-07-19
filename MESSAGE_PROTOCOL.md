@@ -2,7 +2,7 @@ Messages are all JSON.
 
 Command:
 
-{ "command": <command-name>, <parameters> ... }
+    { "command": <command-name>, <parameters> ... }
 
 
 Normal rendering sequence:

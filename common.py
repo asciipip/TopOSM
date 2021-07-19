@@ -50,5 +50,5 @@ fslock = lockfile.FileLock('/tmp/lock.TopOSM.fslock')
 
 def ensureDirExists(path):
     with fslock:
-    if not os.path.isdir(path):
-        os.makedirs(path)
+        if not os.path.isdir(path):
+            os.makedirs(path)

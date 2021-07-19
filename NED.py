@@ -36,7 +36,7 @@ def getTiles(envLL):
         for x in range(fromx, tox+1):
             basename = 'n%02dw%03d' % (y, -x)
             tilepath = getTilepath(basename)
-            print tilepath
+            print(tilepath)
             if path.isfile(tilepath):
                 tiles.append((basename, Box2d(x, y-1, x+1, y)))
     return tiles
@@ -103,7 +103,7 @@ def prepDataFile(basename, env):
         for x in numpy.arange(env.minx, env.maxx, STEP):       
             nedslice = getSlice('ned', x, y)
             if not path.isfile(nedslice):
-                print '  Cutting geotiff slice...'
+                print('  Cutting geotiff slice...')
                 cmd = 'gdalwarp -q -te %f %f %f %f "%s" "%s"' % \
                     (x, y, x+STEP, y+STEP, geotiff, nedslice)
                 os.system(cmd)
@@ -112,19 +112,19 @@ def prepDataFile(basename, env):
             contourfile = contourbasefile + '.shp'
             contourfileproj = contourbasefile + '_900913.shp'
             if not path.isfile(contourfile):
-                print '  Generating contour lines...'
+                print('  Generating contour lines...')
                 cmd = 'gdal_contour -i %f -snodata 32767 -a height "%s" "%s"' % \
                     (CONTOUR_INTERVAL, nedslice, contourfile)
                 os.system(cmd)
 
-                print '  Reprojecting contour lines...'
+                print('  Reprojecting contour lines...')
                 # NOTE: The s_srs is not required with most GDAL/OGR versions
                 cmd = 'ogr2ogr -s_srs "%s" -t_srs "%s" -f "ESRI Shapefile" "%s" "%s"' % \
                     (NAD83_PROJECTION_DEF, MERCATOR_PROJECTION_DEF, \
                     contourfileproj, contourfile)
                 os.system(cmd)
 
-                print '  Importing contour lines...'
+                print('  Importing contour lines...')
                 # NOTE: this assumes that the table is already set up
                 cmd = 'shp2pgsql -a -g way "%s" "%s" | psql -q "%s"' % \
                     (contourfileproj, CONTOURS_TABLE, DATABASE)

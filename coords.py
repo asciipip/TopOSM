@@ -8,8 +8,6 @@ from env import *;
 import mapnik
 from mapnik import Coord, Box2d, Projection
 
-import geohash
-
 __author__      = "Lars Ahlzen"
 __copyright__   = "(c) Lars Ahlzen 2008-2011"
 __license__     = "GPLv2"
@@ -128,7 +126,7 @@ def mercToPixel(coord, z):
 def LLToGeohash(coord):
     """Converts a Coord(lon,lat) or Box2d(l,b,r,t) to
     OSM Mercator (x,y)."""
-    return geohash.encode(coord.y, coord.x)
+    raise Exception('No geohash in Debian for Python 3')
 
 ##### Tile coordinates
 
@@ -160,7 +158,7 @@ def getTileAtLL(coord, z, ntiles = 1):
     Coord(lon,lat) and zoom level."""
     px = LLToPixel(coord, z)
     size = TILE_SIZE * ntiles
-    return ((int)(px.x / size), (int)(px.y / size))
+    return ((int)(px.x // size), (int)(px.y // size))
 
 def getTileRange(envLL, z, ntiles = 1):
     """Returns the tile number range (fromx, tox, fromy, toy)

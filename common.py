@@ -2,9 +2,11 @@
 
 """common.py: Common utility functions for TopOSM"""
 
-import os, time, sys, lockfile
+import os, time, sys
 from os import path
 from threading import Lock
+
+import lockfile
 
 from env import *
 
@@ -17,7 +19,7 @@ class ConsoleManager:
     lock = Lock()
     def printMessage(self, message):
         ConsoleManager.lock.acquire()
-        print message
+        print(message)
         sys.stdout.flush()
         ConsoleManager.lock.release()
     def debugMessage(self, message):
@@ -34,8 +36,8 @@ class ErrorLog:
             file.write("%s %s (%s)\n" % (timestr, message, str(exception)))
             file.close()
         except:
-            print "Failed to write to the error log:"
-            print "%s %s" % (sys.exc_info()[0], sys.exc_info()[1])
+            print("Failed to write to the error log:")
+            print("%s %s" % (sys.exc_info()[0], sys.exc_info()[1]))
         finally:
             ErrorLog.lock.release()        
 
@@ -47,22 +49,22 @@ errorLog = ErrorLog()
 fslock = lockfile.FileLock('/tmp/lock.TopOSM.fslock')
 
 def ensureDirExists(path):
-    with fslock:
-        if not os.path.isdir(path):
-            os.makedirs(path)
+    #with fslock:
+    if not os.path.isdir(path):
+        os.makedirs(path)
 
 def tryRemove(filename):
-    with fslock:
-        if path.isfile(filename):
-            os.remove(filename)
+    #with fslock:
+    if path.isfile(filename):
+        os.remove(filename)
 
 def writeEmpty(filename):
     "Overwrites the specified filename with a new empty file."
-    with fslock:
-        open(filename, 'w').close();
+    #with fslock:
+    open(filename, 'w').close();
 
 def runSql(sql):
     command = "psql -d %s -q -c \"%s\"" % (DATABASE, sql)
-    print command
+    print(command)
     os.system(command)
 

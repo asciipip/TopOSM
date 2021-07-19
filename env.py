@@ -14,7 +14,7 @@ __license__     = "GPLv2"
 
 # Check that the environment is set and import configuration
 if not 'TOPOSM_ENV_SET' in os.environ:
-    print "Error: TopOSM environment not set."
+    print("Error: TopOSM environment not set.")
     sys.exit(1)
 
 BASE_TILE_DIR = os.environ['BASE_TILE_DIR']

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import json
 import os
@@ -13,10 +13,6 @@ import xattr
 from env import *
 from toposm import *
 from stats import *
-
-
-REFERENCE_FILE = '/srv/tiles/tirex/planet-import-complete'
-REFERENCE_MTIME = path.getmtime(REFERENCE_FILE)
 
 
 class ContinuousRenderThread:
@@ -41,7 +37,7 @@ class ContinuousRenderThread:
 
     def loadMaps(self, zoom):
         if len(self.maps) <= zoom:
-            self.tilesizes.extend([ getTileSize(NTILES[z], True) for z in xrange(len(self.tilesizes), zoom + 1) ])
+            self.tilesizes.extend([ getTileSize(NTILES[z], True) for z in range(len(self.tilesizes), zoom + 1) ])
             self.maps.extend([None] * (zoom - len(self.maps) + 1))
         self.maps[zoom] = {}
         for mapname in MAPNIK_LAYERS:
@@ -69,12 +65,12 @@ class ContinuousRenderThread:
         start_time = time.time()
         layerTimes = None
         if metaTileNeedsRendering(mt.z, mt.x, mt.y):
-            print time.strftime('%Y-%m-%d %H:%M:%S')
+            print(time.strftime('%Y-%m-%d %H:%M:%S'))
             message = 'Rendering {0}'.format(mt)
             if len(self.maps) <= mt.z or not self.maps[mt.z]:
                 self.loadMaps(mt.z)
             layerTimes = self.runAndLog(message, renderMetaTile, (mt.z, mt.x, mt.y, NTILES[mt.z], self.maps[mt.z]))
-            print time.strftime('%Y-%m-%d %H:%M:%S')
+            print(time.strftime('%Y-%m-%d %H:%M:%S'))
         if layerTimes:
             stats.recordRender(mt, time.time() - start_time, layerTimes)
         self.printMessage('Notifying queuemaster of completion.')
@@ -87,6 +83,7 @@ class ContinuousRenderThread:
                              'metatile': mt.tojson()}))
 
     def on_command(self, chan, method, props, body):
+        body = body.decode('utf-8')
         self.printMessage('Received message: ' + body)
         message = json.loads(body)
         if 'command' in message:
@@ -140,7 +137,7 @@ class ContinuousRenderThread:
 
 def isOldTile(z, x, y):
     tile_path = getTilePath(REFERENCE_TILESET, z, x, y)
-    return path.isfile(tile_path) and 'user.toposm_dirty' in xattr.listxattr(tile_path)
+    return path.isfile(tile_path) and b'user.toposm_dirty' in xattr.list(tile_path)
 
 def tileNeedsRendering(z, x, y):
     return not tileExists(REFERENCE_TILESET, z, x, y) or isOldTile(z, x, y)
@@ -148,7 +145,7 @@ def tileNeedsRendering(z, x, y):
 def isOldMetaTile(z, x, y):
     ntiles = NTILES[z]
     tile_path = getTilePath(REFERENCE_TILESET, z, x*ntiles, y*ntiles)
-    return path.isfile(tile_path) and 'user.toposm_dirty' in xattr.listxattr(tile_path)
+    return path.isfile(tile_path) and b'user.toposm_dirty' in xattr.list(tile_path)
 
 def metaTileNeedsRendering(z, x, y):
     ntiles = NTILES[z]

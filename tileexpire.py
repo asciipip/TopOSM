@@ -128,6 +128,6 @@ def enumeratePoints(x, y, n, hilbert_curve):
     else:
         for hi in hilbert_order[hilbert_curve]:
             x1 = 2 * x + hi % 2
-            y1 = 2 * y + hi / 2
+            y1 = 2 * y + hi // 2
             for t in enumeratePoints(x1, y1, n - 1, hilbert_next[hilbert_curve][hi]):
                 yield t

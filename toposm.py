@@ -1,14 +1,14 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 """toposm.py: Functions to control TopOSM rendering."""
 
 import sys, os, time, threading
-import numpy
+import numpy as np
 import multiprocessing
 import cairo
 import xattr
 
-from Queue import Queue
+#from Queue import Queue
 from os import path
 from subprocess import call
 
@@ -16,7 +16,7 @@ from subprocess import call
 try:
     from PyPDF2 import PdfFileWriter, PdfFileReader
 except ImportError:
-    print "WARNING: PyPdf2 not found. Render to PDF will not work."
+    print("WARNING: PyPdf2 not found. Render to PDF will not work.")
 
 import mapnik
 from mapnik import Coord, Box2d
@@ -42,7 +42,7 @@ if EXTRA_FONTS_DIR != '':
 
 # Check for cairo support
 if not mapnik.has_cairo():
-    print "ERROR: Your mapnik does not have Cairo support."
+    print("ERROR: Your mapnik does not have Cairo support.")
     sys.exit(1)
 
 
@@ -96,11 +96,18 @@ class Tile:
         else:
             return '{0}/{1}/{2}'.format(self.z, self.x, self.y)
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         if not isinstance(other, Tile):
-            return cmp(id(self), other)
+            return False
+        return self.is_metatile == other.is_metatile and self.sort_key == other.sort_key
+
+    def __lt__(self, other):
+        if not isinstance(other, Tile):
+            return id(self) < other
+        elif self.is_metatile != other.is_metatile:
+            return self.is_metatile < other.is_metatile
         else:
-            return cmp(self.is_metatile, other.is_metatile) or cmp(self.sort_key, other.sort_key)
+            return self.sort_key < other.sort_key
 
     def __hash__(self):
         return hash(self.is_metatile) | hash(self.z) | hash(self.x) | hash(self.y)
@@ -111,7 +118,7 @@ class Tile:
         if self.is_metatile:
             return self
         else:
-            return Tile(self.z, self.x / NTILES[self.z], self.y / NTILES[self.z], True)
+            return Tile(self.z, self.x // NTILES[self.z], self.y // NTILES[self.z], True)
 
     @property
     def sort_key(self):
@@ -145,8 +152,8 @@ class Tile:
     @property
     def is_valid(self):
         if self.is_metatile:
-            return 0 <= self.x and self.x < 2**self.z / NTILES[self.z] and \
-                   0 <= self.y and self.y < 2**self.z / NTILES[self.z]
+            return 0 <= self.x and self.x < 2**self.z // NTILES[self.z] and \
+                   0 <= self.y and self.y < 2**self.z // NTILES[self.z]
         else:
             return 0 <= self.x and self.x < 2**self.z and \
                    0 <= self.y and self.y < 2**self.z
@@ -181,7 +188,7 @@ def tileExists(mapname, z, x, y, suffix = "png"):
     return path.isfile(getTilePath(mapname, z, x, y, suffix))
 
 def tileIsOld(z, x, y):
-    return 'user.toposm_dirty' in xattr.listxattr(getTilePath(REFERENCE_TILESET, z, x, y))
+    return b'user.toposm_dirty' in xattr.list(getTilePath(REFERENCE_TILESET, z, x, y))
 
 def getTileSize(ntiles, includeBorder = True):
     if includeBorder:
@@ -273,7 +280,7 @@ def renderLayerMerc(name, env, xsize, ysize, map):
         surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, xsize, ysize)
         mapnik.render(map, surface)
         image = mapnik.Image.from_cairo(surface)
-    else:            
+    else:
         image = mapnik.Image(xsize, ysize)
         mapnik.render(map, image)
     return image
@@ -296,9 +303,9 @@ def saveTiles(z, x, y, ntiles, mapname, image, suffix = 'png', imgtype = None):
                 view.save(tile_path, imgtype)
             else:
                 view.save(tile_path)
-            if 'user.toposm_dirty' in xattr.listxattr(tile_path):
+            if b'user.toposm_dirty' in xattr.list(tile_path):
                 try:
-                    xattr.removexattr(tile_path, 'user.toposm_dirty')
+                    xattr.remove(tile_path, 'user.toposm_dirty')
                 except IOError:
                     # Ignore the failure.  It means the attribute disappeared on
                     # its own.
@@ -323,11 +330,11 @@ def getMask(image, mask):
 ##### Public methods
 
 def toposmInfo():
-    print "Using mapnik version:", mapnik.mapnik_version()
-    print "Has Cairo:", mapnik.has_cairo()
-    print "Fonts:"
+    print("Using mapnik version:", mapnik.mapnik_version())
+    print("Has Cairo:", mapnik.has_cairo())
+    print("Fonts:")
     for face in mapnik.FontEngine.face_names():
-        print "\t", face
+        print("\t", face)
 
 def prepareData(envLLs):
     if not hasattr(envLLs, '__iter__'):
@@ -351,7 +358,7 @@ def renderToPdf(envLL, filename, sizex, sizey):
     basefilename = os.path.splitext(filename)[0]
     mergedpdf = None
     for mapname in MAPNIK_LAYERS:
-        print 'Rendering', mapname
+        print('Rendering', mapname)
         # Render layer PDF.
         localfilename = basefilename + '_' + mapname + '.pdf';
         file = open(localfilename, 'wb')
@@ -410,13 +417,13 @@ def renderToPng(envLL, filename, sizex, sizey):
     image.save(filename, 'png')
 
 def printSyntax():
-    print "Syntax:"
-    print " toposm.py pdf <area> <filename> <sizeX> <sizeY>"
-    print " toposm.py png <area> <filename> <sizeX> <sizeY>"
-    print " toposm.py png-zoom <lon> <lat> <zoom> <filename> <sizeX> <sizeY>"
-    print " toposm.py prep <area(s)>"
-    print " toposm.py info"
-    print "Areas are named entities in areas.py."
+    print("Syntax:")
+    print(" toposm.py pdf <area> <filename> <sizeX> <sizeY>")
+    print(" toposm.py png <area> <filename> <sizeX> <sizeY>")
+    print(" toposm.py png-zoom <lon> <lat> <zoom> <filename> <sizeX> <sizeY>")
+    print(" toposm.py prep <area(s)>")
+    print(" toposm.py info")
+    print("Areas are named entities in areas.py.")
 
 if __name__ == "__main__":
     if len(sys.argv) == 1:
@@ -448,7 +455,7 @@ if __name__ == "__main__":
     elif cmd == 'prep':
         areaname = sys.argv[2]
         env = vars(areas)[areaname]
-        print "Prepare data: %s %s" % (areaname, env)
+        print("Prepare data: %s %s" % (areaname, env))
         prepareData(env)
     elif cmd == 'info':
         toposmInfo()

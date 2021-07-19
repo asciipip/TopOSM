@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 # standard modules
 import collections
@@ -33,7 +33,7 @@ RENDERER_STALE_TIME = 3600
 # asked to render stuff at zoom 2 to start with.)
 INITIAL_QUEUE_NOTIFY_ZOOM = 7
 # Where the minutely update file lives.
-MINUTELY_STATE_FILE = '/home/mapnik/updates/state.txt'
+MINUTELY_STATE_FILE = '/home/phil/misc/mapnik/updates/state.txt'
 # Maximum age of the database for rendering, in seconds.  If the database age is
 # greater than this, non-important rendering will cease until the database
 # catches up.
@@ -213,7 +213,7 @@ class Queue:
         self.queue_metatile(mt, self.important_stack, 'abandoned')
 
     def get_stats(self):
-        stats = {z: len(self.zoom_queues[z]) for z in xrange(0, self.maxz + 1)}
+        stats = {z: len(self.zoom_queues[z]) for z in range(0, self.maxz + 1)}
         stats.update({'important': len(self.important_stack),
                       'missing': len(self.missing_queue)})
         return stats
@@ -233,7 +233,7 @@ class Queue:
         chosen_pct = random.random()
         pct_sum = 0
         chosen_queue = self.maxz
-        for z in xrange(0, self.maxz + 1):
+        for z in range(0, self.maxz + 1):
             pct_sum += queue_pcts[z]
             if chosen_pct < pct_sum and chosen_queue == self.maxz:
                 chosen_queue = z
@@ -254,7 +254,7 @@ class Queue:
         chosen_pct = random.random()
         pct_sum = 0
         chosen_queue = self.maxz
-        for z in xrange(0, self.maxz + 1):
+        for z in range(0, self.maxz + 1):
             pct_sum += queue_pcts[z]
             if chosen_pct < pct_sum and chosen_queue == self.maxz:
                 chosen_queue = z
@@ -277,14 +277,14 @@ class QueueFiller(threading.Thread):
         
     def run(self):
         log_message('Initializing queue.')
-        for z in xrange(2, self.maxz + 1):
+        for z in range(2, self.maxz + 1):
             with self.lock:
                 self.current_zoom = z
             for root, dirs, files in os.walk(os.path.join(BASE_TILE_DIR, REFERENCE_TILESET, str(z))):
                 dirty_tiles = []
                 for file in files:
                     full_path = os.path.join(root, file)
-                    if 'user.toposm_dirty' in xattr.listxattr(full_path):
+                    if b'user.toposm_dirty' in xattr.list(full_path):
                         cs = root.split('/')
                         dirty_tiles.append(
                             (os.stat(full_path).st_mtime, Tile(int(cs[-2]), int(cs[-1]), int(file.split('.')[0]))))
@@ -346,19 +346,19 @@ class TileExpirer(threading.Thread):
     def process_expire(self, expire):
         with self.lock:
             self.current_expire = expire
-        for z in xrange(self.maxz, 2 - 1, -1):
+        for z in range(self.maxz, 2 - 1, -1):
             with self.lock:
                 self.current_expire_zoom = z
             for (x, y) in expire.expiredAt(z):
                 t = Tile(z, x, y)
                 tile_path = getTilePath(REFERENCE_TILESET, z, x, y)
                 if path.isfile(tile_path):
-                    if 'user.toposm_dirty' not in xattr.listxattr(tile_path):
-                        xattr.setxattr(tile_path, 'user.toposm_dirty', 'yes')
+                    if b'user.toposm_dirty' not in xattr.list(tile_path):
+                        xattr.set(tile_path, 'user.toposm_dirty', 'yes')
                     mt = t.metatile
                     tile_path = getTilePath(REFERENCE_TILESET, mt.z, mt.x * NTILES[z], mt.y * NTILES[z])
-                    if path.isfile(tile_path) and 'user.toposm_dirty' not in xattr.listxattr(tile_path):
-                        xattr.setxattr(tile_path, 'user.toposm_dirty', 'yes')
+                    if path.isfile(tile_path) and b'user.toposm_dirty' not in xattr.list(tile_path):
+                        xattr.set(tile_path, 'user.toposm_dirty', 'yes')
                     self.queue.queue_tile(t, 'zoom', 'expire')
         with self.lock:
             self.current_expire = None
@@ -470,10 +470,12 @@ class Queuemaster:
     ### AMQP commands.
     
     def on_expire(self, chan, method, props, body):
+        body = body.decode('utf-8')
         for tile_str in body.split(';'):
             self.expirer.add_expired(Tile.fromstring(tile_str))
 
     def on_command(self, chan, method, props, body):
+        body = body.decode('utf-8')
         try:
             message = json.loads(body)
             command = message['command']
@@ -544,7 +546,7 @@ class Queuemaster:
 
     def send_queue_metrics(self):
         frames = []
-        for queue_name, queue_len in self.queue.get_stats().iteritems():
+        for queue_name, queue_len in self.queue.get_stats().items():
             frames.append({
                 'measurement': 'queue',
                 'tags': {'name': str(queue_name)},
@@ -552,7 +554,7 @@ class Queuemaster:
             })
         try:
             self.influx_client.write_points(frames)
-        except influxdb.exceptions.InfluxDBServerError, e:
+        except influxdb.exceptions.InfluxDBServerError as e:
             log_message('InfluxDB error, reconnecting: {}'.format(e))
             self.influx_client = influxdb.InfluxDBClient(database='toposm')
             time.sleep(1)

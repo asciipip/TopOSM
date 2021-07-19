@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import json
 import math
@@ -16,22 +16,22 @@ def isint(s):
     except ValueError:
         return False
 
-def queue_sort(a, b):
+def queue_sort_key(queue_str):
     try:
-        return cmp(int(a), int(b))
+        return (int(queue_str), '')
     except ValueError:
-        return cmp(a, b)
-
+        return (math.inf, queue_str)
+    
 def print_stats(s):
-    print 'expire queue: %s' % s['expire']['input']
+    print('expire queue: %s' % s['expire']['input'])
     if s['expire']['status']:
-        print 'currently expiring at zoom %s, %s tiles' % (s['expire']['status'][0], s['expire']['status'][1])
+        print('currently expiring at zoom %s, %s tiles' % (s['expire']['status'][0], s['expire']['status'][1]))
     if 'init' in s:
-        print 'currently initializing at zoom %s' % s['init']
-    print ''
+        print('currently initializing at zoom %s' % s['init'])
+    print('')
     for renderer, (status, dequeue_strategy) in sorted(s['render'].items()):
-        print '%s/%s: %s' % (renderer, dequeue_strategy, status)
-    print ''
+        print('%s/%s: %s' % (renderer, dequeue_strategy, status))
+    print('')
     weighted_queues = {}
     fixed_pct_queues = {}
     q_width = 1
@@ -49,19 +49,19 @@ def print_stats(s):
             weighted_queues[k] = v * pow(4, z) / pow(NTILES[z], 2)
     total_w = sum(weighted_queues.values())
     total_fp = sum(fixed_pct_queues.values())
-    print 'queue  count  by_work  by_zoom'
-    print '-----  -----  -------  -------'
-    for k in sorted(s['queue'].keys(), queue_sort):
+    print('queue  count  by_work  by_zoom')
+    print('-----  -----  -------  -------')
+    for k in sorted(s['queue'].keys(), key=queue_sort_key):
         count = s['queue'][k]
         if k in weighted_queues:
             count_w = weighted_queues[k]
             count_fp = fixed_pct_queues[k]
-            print '{0:>5}: {1:>5}  {2:7.2%}  {3:7.3%}'.format(
+            print('{0:>5}: {1:>5}  {2:7.2%}  {3:7.3%}'.format(
                 k, str(count).rjust(q_width),
                 float(count_w) / float(total_w) if total_w > 0 else 0,
-                float(count_fp) / float(total_fp) if total_fp > 0 else 0)
+                float(count_fp) / float(total_fp) if total_fp > 0 else 0))
         else:
-            print '{0:>5}: {1:>5}'.format(k[0:4], str(count).rjust(q_width))
+            print('{0:>5}: {1:>5}'.format(k[0:4], str(count).rjust(q_width)))
 
 def request_stats(chan, queue):
     correlation_id = str(uuid.uuid4())
@@ -90,8 +90,8 @@ while not result_received:
         if 'command' in message and message['command'] == 'queuemaster online':
             correlation_id = request_stats(chan, queue)
         elif props.correlation_id == correlation_id:
-            print '%0.2f seconds to receive message' % (time.time() - time_sent)
-            print ''
+            print('%0.2f seconds to receive message' % (time.time() - time_sent))
+            print('')
             print_stats(message)
             result_received = True
     else:

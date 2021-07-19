@@ -49,22 +49,6 @@ errorLog = ErrorLog()
 fslock = lockfile.FileLock('/tmp/lock.TopOSM.fslock')
 
 def ensureDirExists(path):
-    #with fslock:
+    with fslock:
     if not os.path.isdir(path):
         os.makedirs(path)
-
-def tryRemove(filename):
-    #with fslock:
-    if path.isfile(filename):
-        os.remove(filename)
-
-def writeEmpty(filename):
-    "Overwrites the specified filename with a new empty file."
-    #with fslock:
-    open(filename, 'w').close();
-
-def runSql(sql):
-    command = "psql -d %s -q -c \"%s\"" % (DATABASE, sql)
-    print(command)
-    os.system(command)
-

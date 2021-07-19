@@ -18,12 +18,7 @@ if not 'TOPOSM_ENV_SET' in os.environ:
     sys.exit(1)
 
 BASE_TILE_DIR = os.environ['BASE_TILE_DIR']
-CONTOURS_TABLE = os.environ['CONTOURS_TABLE']
-DATABASE = os.environ['DB_NAME']
 TEMPDIR = os.environ['TEMP_DIR']
-NED13DIR = os.environ['NED13_DIR']
-COLORFILE = os.environ['COLORFILE']
-NUM_THREADS = int(os.environ['RENDER_THREADS'])
 TILE_SIZE = int(os.environ['TILE_SIZE'])
 BORDER_WIDTH = int(os.environ['BORDER_WIDTH'])
 ERRORLOG = os.environ['ERROR_LOG']

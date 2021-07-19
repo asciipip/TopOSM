@@ -25,9 +25,8 @@ mapnik.logger.set_severity(mapnik.severity_type.Debug)
 from env import *
 from coords import *
 from common import *
-import NED
 import areas
-from JobManager import JobManager
+
 
 __author__      = "Lars Ahlzen and contributors"
 __copyright__   = "(c) Lars Ahlzen and contributors 2008-2011"
@@ -175,9 +174,6 @@ def getMetaTilePath(mapname, z, x, y, suffix = "png"):
     return path.join(getMetaTileDir(mapname, z), \
         's' + str(x) + '_' + str(y) + '.' + suffix)
 
-def metaTileExists(mapname, z, x, y, suffix = "png"):
-    return path.isfile(getMetaTilePath(mapname, z, x, y, suffix))
-
 def getTileDir(mapname, z, x):
     return path.join(getMetaTileDir(mapname, z), str(x))
 
@@ -196,31 +192,6 @@ def getTileSize(ntiles, includeBorder = True):
     else:
         return TILE_SIZE * ntiles
         
-def allTilesExist(mapname, z, fromx, tox, fromy, toy, suffix = "png"):
-    for x in range(fromx, tox+1):
-        for y in range(fromy, toy+1):
-            if not tileExists(mapname, z, x, y, suffix):
-                return False
-    return True
-            
-def allConstituentTilesExist(z, x, y, ntiles):
-    fromx = x*ntiles
-    tox = (x+1)*ntiles - 1
-    fromy = y*ntiles
-    toy = (y+1)*ntiles - 1
-    # NOTE: This only checks for the final "composite" tile set(s)...
-    if SAVE_PNG_COMPOSITE:
-        chExists = allTilesExist('composite_h', z, fromx, tox, fromy, toy, 'png')
-        clExists = allTilesExist('composite_l', z, fromx, tox, fromy, toy, 'png')
-        if (not chExists) or (not clExists):
-            return False
-    if SAVE_JPEG_COMPOSITE:
-        jhExists = allTilesExist('jpeg90_h', z, fromx, tox, fromy, toy, 'jpg')
-        jlExists = allTilesExist('jpeg90_l', z, fromx, tox, fromy, toy, 'jpg')
-        if (not jhExists) or (not jlExists):
-            return False
-    return True
-
 def renderMetaTile(z, x, y, ntiles, maps):
     """Renders the specified map tile and saves the result (including the
     composite) as individual tiles."""
@@ -336,23 +307,6 @@ def toposmInfo():
     for face in mapnik.FontEngine.face_names():
         print("\t", face)
 
-def prepareData(envLLs):
-    if not hasattr(envLLs, '__iter__'):
-        envLLs = (envLLs,)
-    manager = JobManager()
-    for envLL in envLLs:
-        tiles = NED.getTiles(envLL)        
-        for tile in tiles:
-            manager.addJob("Preparing %s" % (tile[0]), NED.prepDataFile, tile)
-    manager.finish()
-    
-    console.printMessage("Postprocessing contours...")
-    NED.removeSeaLevelContours()
-    NED.simplifyContours(1.0)
-    NED.convertContourElevationsToFt()
-    NED.clusterContoursOnGeoColumn()
-    NED.analyzeContoursTable()
-
 def renderToPdf(envLL, filename, sizex, sizey):
     """Renders the specified Box2d and zoom level as a PDF"""
     basefilename = os.path.splitext(filename)[0]
@@ -421,7 +375,6 @@ def printSyntax():
     print(" toposm.py pdf <area> <filename> <sizeX> <sizeY>")
     print(" toposm.py png <area> <filename> <sizeX> <sizeY>")
     print(" toposm.py png-zoom <lon> <lat> <zoom> <filename> <sizeX> <sizeY>")
-    print(" toposm.py prep <area(s)>")
     print(" toposm.py info")
     print("Areas are named entities in areas.py.")
 
@@ -452,11 +405,6 @@ if __name__ == "__main__":
                               center_px.x + sizex / 2, center_px.y + sizey / 2),
                         zoom)
         renderToPng(env, filename, sizex, sizey)
-    elif cmd == 'prep':
-        areaname = sys.argv[2]
-        env = vars(areas)[areaname]
-        print("Prepare data: %s %s" % (areaname, env))
-        prepareData(env)
     elif cmd == 'info':
         toposmInfo()
     else:

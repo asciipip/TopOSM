@@ -2,7 +2,7 @@
 
 """toposm.py: Functions to control TopOSM rendering."""
 
-import sys, os, time, threading
+import sys, os, time, threading, functools
 import numpy as np
 import multiprocessing
 import cairo
@@ -60,6 +60,7 @@ JPEG_COMPOSITE_QUALITY = 90
 USE_CAIRO = False
 
 
+@functools.total_ordering
 class Tile:
     """Represents a single tile (or metatile)."""
 
@@ -97,12 +98,12 @@ class Tile:
 
     def __eq__(self, other):
         if not isinstance(other, Tile):
-            return False
+            return NotImplemented
         return self.is_metatile == other.is_metatile and self.sort_key == other.sort_key
 
     def __lt__(self, other):
         if not isinstance(other, Tile):
-            return id(self) < other
+            return NotImplemented
         elif self.is_metatile != other.is_metatile:
             return self.is_metatile < other.is_metatile
         else:

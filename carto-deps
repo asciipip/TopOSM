@@ -1,0 +1,28 @@
+#!/usr/bin/env python3
+
+import argparse
+import json
+import pathlib
+
+import yaml
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('cssfile', type=pathlib.Path)
+    args = parser.parse_args()
+
+    return args
+
+def parse_cssfile(cssfile):
+    with open(cssfile) as ipt:
+        try:
+            return json.load(ipt)
+        except json.decoder.JSONDecodeError:
+            ipt.seek(0)
+            return yaml.safe_load(ipt)
+        
+            
+if __name__ == '__main__':
+    args = parse_args()
+    css = parse_cssfile(args.cssfile)
+    print(' '.join([str(args.cssfile.with_name(f)) for f in css['Stylesheet']]))

@@ -147,15 +147,18 @@ Map {
     [zoom >= 11][zoom < 13][highway = 'trunk'],
     [zoom >= 11][zoom < 13][highway = 'primary'],
     [zoom >= 12][zoom < 13][highway = 'secondary'] {
-        shield-name: [ref];
-        shield-file: url('custom-symbols/shield-black-[length].png');
+        shield-file: url('custom-symbols/shield-black.svg');  /* Will be overridden later */
         shield-face-name: @bold-fonts;
         shield-placement: line;
         shield-min-distance: 35;
         shield-spacing: 500;
         shield-size: 10;
-        shield-fill: white;
         shield-dy: -1;
+        [length > 0] {
+            shield-name: [ref];
+            shield-file: url('custom-symbols/shield-black-[length].png');
+            shield-fill: white;
+        }
         [route_shield != ''] {
             shield-name: '';
             shield-file: url('[route_shield]');
@@ -171,14 +174,17 @@ Map {
     [zoom >= 13][highway = 'secondary'],
     [zoom >= 13][highway = 'tertiary'],
     [zoom >= 15] {
-        shield-name: [ref];
-        shield-file: url('custom-symbols/shield-black-[length].png');
+        shield-file: url('custom-symbols/shield-black.svg');  /* Will be overridden later */
         shield-face-name: @bold-fonts;
         shield-placement: line;
         shield-min-distance: 35;
         shield-spacing: 500;
-        shield-fill: white;
         shield-dy: -1;
+        [length > 0] {
+            shield-name: [ref];
+            shield-file: url('custom-symbols/shield-black-[length].png');
+            shield-fill: white;
+        }
         [route_shield != ''] {
             shield-name: '';
             shield-file: url('[route_shield]');

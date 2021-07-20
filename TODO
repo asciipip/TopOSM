@@ -17,11 +17,6 @@
 
    - Arrows or other indicators for one-way streets
 
-   - fix error: Marker does not exist: custom-symbols/shield-black-.png
-
-   - fix error: warning: unable to find face-name 'unifont Medium' in FontSet 'fontset-0'
-     (also 'fontset-1' and 'fontset-2')
-     
 * Stylesheet enhancements
 
    - Reorganize locations (put in subdirectory)

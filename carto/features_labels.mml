@@ -74,7 +74,7 @@ Layer:
     srs: *srs
     Datasource:
       <<: *osm2pgsql
-      table: (SELECT way, highway, ref, char_length(ref) as length, shields_get_filename(osm_id, way) route_shield FROM planet_osm_line WHERE highway IS NOT NULL AND ((ref IS NOT NULL AND char_length(ref) BETWEEN 1 AND 8) OR shields_get_route_memberships(osm_id) IS NOT NULL)) AS shields
+      table: (SELECT way, highway, ref, char_length(ref) as length, shields_get_filename(osm_id, way) route_shield FROM planet_osm_line WHERE highway IS NOT NULL AND ((ref IS NOT NULL AND char_length(ref) BETWEEN 1 AND 16) OR shields_get_route_memberships(osm_id) IS NOT NULL)) AS shields
   - id: streetnames
     name: streetnames
     class: streetnames trailnames

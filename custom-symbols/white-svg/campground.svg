@@ -57,7 +57,7 @@
      id="layer1"
      transform="translate(-556.92053,-353.4547)">
     <path
-       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline"
        d="m 568.57143,353.4547 -9.36663,19.00769 -2.28427,0 0,1.66441 23.30179,-0.004 0,-1.66441 -2.28426,0.004 -9.36663,-19.00769 z m 0,9.98649 4.37339,9.0212 -8.74678,0 4.37339,-9.0212 z"
        id="path3616"
        sodipodi:nodetypes="cccccccccccc"

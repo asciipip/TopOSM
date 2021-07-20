@@ -57,7 +57,7 @@
      id="layer1"
      transform="translate(-363.08421,-522.07828)">
     <rect
-       style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.40000001;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.40000001;marker:none;visibility:visible;display:inline"
        id="rect3648"
        width="3.0992694"
        height="20.14525"
@@ -65,13 +65,13 @@
        y="633.29675"
        transform="matrix(0.70710678,-0.70710678,0.70710678,0.70710678,0,0)" />
     <path
-       style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.40000001;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.40000001;marker:none;visibility:visible;display:inline"
        d="m 363.26308,529.28565 7.0285,-7.0285 c 0.23848,-0.23849 0.62246,-0.23849 0.86095,0 l 2.42632,2.42632 c 0.23848,0.23848 0.23848,0.62246 0,0.86095 l -7.0285,7.0285 c -0.23849,0.23848 -0.62247,0.23848 -0.86095,0 l -2.42632,-2.42632 c -0.23849,-0.23849 -0.23849,-0.62247 0,-0.86095 z"
        id="path3650"
        sodipodi:nodetypes="ccccccccc"
        inkscape:connector-curvature="0" />
     <rect
-       style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.40000001;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.40000001;marker:none;visibility:visible;display:inline"
        id="rect3652"
        width="3.0992694"
        height="20.14525"

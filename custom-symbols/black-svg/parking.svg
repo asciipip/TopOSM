@@ -73,13 +73,13 @@
          height="95"
          width="95"
          id="rect3488"
-         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline" />
       <path
          inkscape:export-ydpi="16.105263"
          inkscape:export-xdpi="16.105263"
          id="path3496"
          d="m 160,422.36218 0,-74.67049 24.19406,0 c 9.16823,8e-5 15.14458,0.3736 17.92907,1.12057 4.27847,1.12064 7.86088,3.56551 10.74725,7.33462 2.88624,3.73528 4.3294,8.57409 4.32946,14.51643 -6e-5,4.58418 -0.832,8.43825 -2.49581,11.56221 -1.66393,3.12404 -3.78621,5.58589 -6.36685,7.38556 -2.5468,1.76577 -5.14447,2.93727 -7.79304,3.5145 -3.59944,0.71312 -8.81176,1.06966 -15.63699,1.06963 l -9.83043,0 0,28.16697 -15.07672,0 m 15.07672,-62.03864 0,21.18889 8.25145,0 c 5.94236,5e-5 9.91527,-0.39045 11.91875,-1.1715 2.00339,-0.78096 3.56539,-2.00339 4.68601,-3.66731 1.15447,-1.66382 1.73173,-3.59934 1.73178,-5.80657 -5e-5,-2.71647 -0.79803,-4.9576 -2.39394,-6.7234 -1.596,-1.76568 -3.61641,-2.86927 -6.06124,-3.31077 -1.79974,-0.3395 -5.41611,-0.50928 -10.84913,-0.50934 l -7.28368,0"
-         style="font-size:104.3145752px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;display:inline;font-family:Sans;-inkscape-font-specification:Sans"
+         style="text-align:start;line-height:125%;fill:#ffffff;fill-opacity:1;stroke:none;display:inline;-inkscape-font-specification:Sans"
          inkscape:connector-curvature="0" />
     </g>
   </g>

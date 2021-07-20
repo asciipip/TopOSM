@@ -78,16 +78,6 @@
        id="path3175"
        d="M 53,43.862183 A 6.5,6.5 0 1 1 40,43.862183 A 6.5,6.5 0 1 1 53,43.862183 z"
        transform="translate(12.5,-15)" />
-    <text
-       xml:space="preserve"
-       style="line-height:0%;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="68"
-       y="25.362183"
-       id="text3179"><tspan
-         id="tspan3181"
-         x="68"
-         y="25.362183"
-         style="line-height:1.25">-4px for corners</tspan></text>
     <path
        style="opacity:1;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.44999999;stroke-linecap:butt;stroke-linejoin:miter;marker:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline"
        id="path3183"

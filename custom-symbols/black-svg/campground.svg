@@ -73,7 +73,7 @@
          height="95"
          width="95"
          id="rect3159"
-         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline" />
       <path
          inkscape:export-ydpi="16.105263"
          inkscape:export-xdpi="16.105263"
@@ -81,7 +81,7 @@
          sodipodi:nodetypes="cccccccccccc"
          id="rect3209"
          d="m 187.77794,36.880883 -30.22206,61.329566 -7.37034,0 0,5.370341 75.1848,-0.0138 0,-5.37034 L 218,98.210449 187.77794,36.880883 z m 0,32.22206 14.11103,29.107506 -28.22206,0 14.11103,-29.107506 z"
-         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline"
          inkscape:connector-curvature="0" />
     </g>
   </g>

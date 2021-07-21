@@ -147,7 +147,7 @@ Map {
     [zoom >= 11][zoom < 13][highway = 'trunk'],
     [zoom >= 11][zoom < 13][highway = 'primary'],
     [zoom >= 12][zoom < 13][highway = 'secondary'] {
-        shield-file: url('custom-symbols/shield-black.svg');  /* Will be overridden later */
+        shield-file: url('custom-symbols/empty.svg');  /* Will be overridden later */
         shield-face-name: @bold-fonts;
         shield-placement: line;
         shield-min-distance: 35;
@@ -174,7 +174,7 @@ Map {
     [zoom >= 13][highway = 'secondary'],
     [zoom >= 13][highway = 'tertiary'],
     [zoom >= 15] {
-        shield-file: url('custom-symbols/shield-black.svg');  /* Will be overridden later */
+        shield-file: url('custom-symbols/empty.svg');  /* Will be overridden later */
         shield-face-name: @bold-fonts;
         shield-placement: line;
         shield-min-distance: 35;

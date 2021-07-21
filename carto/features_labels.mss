@@ -7,7 +7,7 @@ Map {
 
 #statenames {
     [zoom >= 4][zoom < 8][place = 'state'] {
-        text-face-name: @book-fonts;
+        text-face-name: @place-fonts-minor;
         text-fill: @statenamecolor;
         text-halo-fill: @halocolor;
         text-halo-radius: @haloradius;
@@ -32,9 +32,9 @@ Map {
         text-fill: @placenamecolor;
         text-halo-fill: @halocolor;
         text-halo-radius: @haloradius;
-        [zoom >=  5][zoom <  8] { text-size:  9; text-face-name: @book-fonts; }
-        [zoom >=  8][zoom < 10] { text-size: 10; text-face-name: @bold-fonts; }
-        [zoom >= 10]            { text-size: 17; text-face-name: @bold-fonts; }
+        [zoom >=  5][zoom <  8] { text-size:  9; text-face-name: @place-fonts-minor; }
+        [zoom >=  8][zoom < 10] { text-size: 10; text-face-name: @place-fonts-major; }
+        [zoom >= 10]            { text-size: 17; text-face-name: @place-fonts-major; }
     }
     [zoom >= 8][place = 'town'],
     [zoom >= 10][place = 'suburb'] {
@@ -42,13 +42,13 @@ Map {
         text-fill: @placenamecolor;
         text-halo-fill: @halocolor;
         text-halo-radius: @haloradius;
-        [zoom >=  8][zoom < 10] { text-size:  9; text-face-name: @book-fonts; }
-        [zoom >= 10][zoom < 11] { text-size: 10; text-face-name: @bold-fonts; }
-        [zoom >= 11]            { text-size: 13; text-face-name: @bold-fonts; }
+        [zoom >=  8][zoom < 10] { text-size:  9; text-face-name: @place-fonts-minor; }
+        [zoom >= 10][zoom < 11] { text-size: 10; text-face-name: @place-fonts-major; }
+        [zoom >= 11]            { text-size: 13; text-face-name: @place-fonts-major; }
     }
     [zoom >= 11][place = 'village'] {
         text-name: [name];
-        text-face-name: @bold-fonts;
+        text-face-name: @place-fonts-major;
         text-fill: @placenamecolor;
         text-halo-fill: @halocolor;
         text-halo-radius: @haloradius;
@@ -59,7 +59,7 @@ Map {
     [zoom >= 13][place = 'hamlet'],
     [zoom >= 13][place = 'neighbourhood'] {
         text-name: [name];
-        text-face-name: @bold-fonts;
+        text-face-name: @place-fonts-major;
         text-fill: @placenamecolor;
         text-halo-fill: @halocolor;
         text-halo-radius: @haloradius;
@@ -78,7 +78,7 @@ Map {
     [zoom >= 15][highway = 'track'],
     [zoom >= 15][highway = 'service'] {
         text-name: [name];
-        text-face-name: @book-fonts;
+        text-face-name: @road-fonts;
         text-fill: @streetnamecolor;
         text-halo-radius: 2;
         text-spacing: 300;
@@ -120,7 +120,7 @@ Map {
     [zoom >= 15][highway = 'steps'],
     [zoom >= 15][highway = 'pedestrian'] {
         text-name: [name];
-        text-face-name: @book-fonts;
+        text-face-name: @road-fonts;
         text-fill: @streetnamecolor;
         text-halo-fill: @halocolor;
         text-halo-radius: @haloradius;
@@ -134,7 +134,7 @@ Map {
 #shields-very-low-zoom {
     [zoom >= 7][zoom < 10] {
         shield-file: url('[route_shield]');
-        shield-face-name: @bold-fonts;
+        shield-face-name: @shield-fonts;
         shield-placement: line;
         shield-min-distance: 35;
         shield-spacing: 500;
@@ -148,7 +148,7 @@ Map {
     [zoom >= 11][zoom < 13][highway = 'primary'],
     [zoom >= 12][zoom < 13][highway = 'secondary'] {
         shield-file: url('custom-symbols/empty.svg');  /* Will be overridden later */
-        shield-face-name: @bold-fonts;
+        shield-face-name: @shield-fonts;
         shield-placement: line;
         shield-min-distance: 35;
         shield-spacing: 500;
@@ -175,7 +175,7 @@ Map {
     [zoom >= 13][highway = 'tertiary'],
     [zoom >= 15] {
         shield-file: url('custom-symbols/empty.svg');  /* Will be overridden later */
-        shield-face-name: @bold-fonts;
+        shield-face-name: @shield-fonts;
         shield-placement: line;
         shield-min-distance: 35;
         shield-spacing: 500;
@@ -205,7 +205,7 @@ Map {
     [zoom >= 14][waterway = 'ditch'],
     [zoom >= 14][waterway = 'brook'] {
         text-name: [name];
-        text-face-name: @book-fonts;
+        text-face-name: @water-fonts-line;
         text-fill: @waterlinecolor;
         text-halo-radius: @haloradius;
         text-halo-fill: @halocolor;
@@ -222,7 +222,7 @@ Map {
         [zoom >= 8][way_area_pixels >= 128],
         [zoom >= 14] {
             text-name: [name];
-            text-face-name: @oblique-fonts;
+            text-face-name: @water-fonts-area;
             text-fill: @waterlinecolor;
             text-halo-radius: @haloradius;
             text-halo-fill: @halocolor;
@@ -241,7 +241,7 @@ Map {
 .featurenames {
     [zoom >= 14][feature = 'natural_peak'] {
         text-name: [name];
-        text-face-name: @book-fonts;
+        text-face-name: @feature-fonts-regular;
         text-size: 11;
         text-wrap-width: 100;
         text-fill: @contourcolor;
@@ -249,7 +249,7 @@ Map {
         text-halo-radius: @haloradius;
         text-dy: 10;
         b/text-name: [ele_w_unit];
-        b/text-face-name: @book-fonts;
+        b/text-face-name: @feature-fonts-regular;
         b/text-size: 10;
         b/text-wrap-width: 100;
         b/text-fill: @contourcolor;
@@ -260,7 +260,7 @@ Map {
 
     [zoom >= 13][feature = 'aeroway_aerodrome'] {
         text-name: [name];
-        text-face-name: @book-fonts;
+        text-face-name: @feature-fonts-regular;
         text-size: 10;
         text-wrap-width: 150;
         text-fill: @transportationcolor;
@@ -271,7 +271,7 @@ Map {
 
     [zoom >= 15][feature = 'railway_station'] {
         text-name: [name];
-        text-face-name: @book-fonts;
+        text-face-name: @feature-fonts-regular;
         text-size: 10;
         text-wrap-width: 150;
         text-fill: @transportationcolor;
@@ -298,7 +298,7 @@ Map {
         [zoom >= 8][way_area_pixels >= 128],
         [zoom >= 14] {
             text-name: [name];
-            text-face-name: @oblique-fonts;
+            text-face-name: @feature-fonts-italic;
             text-placement: interior;
             text-wrap-width: 64;
             text-ratio: 50%;
@@ -318,7 +318,7 @@ Map {
         [zoom >= 14][zoom < 15][way_area >   200000],
         [zoom >= 15] {
             text-name: [name];
-            text-face-name: @oblique-fonts;
+            text-face-name: @feature-fonts-italic;
             text-wrap-width: 20;
             text-fill: @residentialcolortext;
             text-halo-fill: @halocolor;
@@ -336,7 +336,7 @@ Map {
         [zoom >= 14][zoom < 15][way_area >   200000],
         [zoom >= 15] {
             text-name: [name];
-            text-face-name: @oblique-fonts;
+            text-face-name: @feature-fonts-italic;
             text-wrap-width: 20;
             text-fill: @schoolcolortext;
             text-halo-fill: @halocolor;
@@ -354,7 +354,7 @@ Map {
         [zoom >= 14][zoom < 15][way_area >   200000],
         [zoom >= 15] {
             text-name: [name];
-            text-face-name: @oblique-fonts;
+            text-face-name: @feature-fonts-italic;
             text-wrap-width: 20;
             text-fill: @commercialcolortext;
             text-halo-fill: @halocolor;
@@ -374,7 +374,7 @@ Map {
         [zoom >= 14][zoom < 15][way_area >   200000],
         [zoom >= 15] {
             text-name: [name];
-            text-face-name: @oblique-fonts;
+            text-face-name: @feature-fonts-italic;
             text-wrap-width: 20;
             text-fill: @industrialcolortext;
             text-halo-fill: @halocolor;

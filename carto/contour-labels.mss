@@ -7,7 +7,7 @@ Map {
     text-size: 8;
     text-halo-radius: 2;
     text-name: "[ele_ft]";
-    text-face-name: @book-fonts;
+    text-face-name: @contour-fonts;
     text-fill: @contourcolor;
     text-placement: line;
     text-halo-fill: @halocolor;
@@ -19,7 +19,7 @@ Map {
     text-halo-radius: 3;
     text-spacing: 550;
     text-name: "[ele_ft]";
-    text-face-name: @book-fonts;
+    text-face-name: @contour-fonts;
     text-fill: @contourcolor;
     text-placement: line;
     text-halo-fill: @halocolor;

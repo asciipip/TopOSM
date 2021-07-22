@@ -1,18 +1,17 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import os
 import ssl
 import sys
 import time
-import httplib
+import http.client as httplib
 import json
-import urllib2
 import socket
 import datetime
-import StringIO
+from io import StringIO
 
 import cgi
-import cgitb; cgitb.enable()
+#import cgitb; cgitb.enable()
 
 import boto
 from boto.s3.connection import S3Connection
@@ -44,7 +43,7 @@ MISSING_TIMEOUT = 3600
 #    Redirect client to AWS with low-bandwidth tiles.
 #
 # In any case, wait indefinitely for missing tiles to render.
-LOCAL_PREFIX = '192.168.12.'
+LOCAL_PREFIX = '192.168.'
 if os.environ['REMOTE_ADDR'].startswith(LOCAL_PREFIX) or os.environ['REMOTE_ADDR'].startswith('127.'):
     # Local
     TILESET = HIGH_BANDWIDTH_TILESET
@@ -111,6 +110,9 @@ def upload_tile(t):
         headers={'Content-Type': CONTENT_TYPES[TILESET[1]]})
 
 def upload(t):
+    if not AWS_UPLOAD:
+        return
+    
     s3_connection = httplib.HTTPConnection(AWS_BUCKET)
 
     s3_connection.request('HEAD', get_tile_url(TILESET, t))
@@ -127,34 +129,34 @@ def upload(t):
         upload_tile(t)
     else:
         sys.stderr.write("{0} unknown status: {1} {2}".format(t, r.status, r.reason))
-        print 'Status: 500 Internal Server Error'
-        print 'Content-type: text/plain'
-        print ''
-        print 'Don\'t know how to handle status {0}: {1}'.format(r.status, r.reason)
+        print('Status: 500 Internal Server Error')
+        print('Content-type: text/plain')
+        print('')
+        print('Don\'t know how to handle status {0}: {1}'.format(r.status, r.reason))
         exit(1)
 
 
 def redirect(t):
     if AWS_UPLOAD:
-        print 'Location: http://{0}{1}'.format(AWS_BUCKET, get_tile_url(TILESET, t))
+        print('Location: http://{0}{1}'.format(AWS_BUCKET, get_tile_url(TILESET, t)))
     else:
-        print 'Location: http://{0}{1}'.format(LOCAL_BASE, get_tile_url(TILESET, t))
-    print ''
+        print('Location: http://{0}{1}'.format(LOCAL_BASE, get_tile_url(TILESET, t)))
+    print('')
     exit(0)
 
 def print_tile_status(t):
     if not t.exists(TILESET[0], TILESET[1]):
-        print 'Tile has never been rendered.'
+        print('Tile has never been rendered.')
         return
     if tile.is_old():
-        print 'Tile is dirty.'
+        print('Tile is dirty.')
     else:
-        print 'Tile is clean.'
+        print('Tile is clean.')
     tstat = os.stat(tile.path(TILESET[0], TILESET[1]))
     mt = t.metatile
-    print 'Metatile is {0}/{1}/{2}.'.format(mt.z, mt.x, mt.y)
-    print 'Last rendered at {0} GMT.'.format(time.asctime(time.gmtime(tstat.st_mtime)))
-    print 'Last accessed at {0} GMT.'.format(time.asctime(time.gmtime(tstat.st_atime)))
+    print('Metatile is {0}/{1}/{2}.'.format(mt.z, mt.x, mt.y))
+    print('Last rendered at {0} GMT.'.format(time.asctime(time.gmtime(tstat.st_mtime))))
+    print('Last accessed at {0} GMT.'.format(time.asctime(time.gmtime(tstat.st_atime))))
 
 
 try:
@@ -171,8 +173,8 @@ try:
     sys.stderr.write("request: {0} {1}\n".format(command, tile))
 
     if command == 'status':
-        print 'Content-type: text/plain'
-        print ''
+        print('Content-type: text/plain')
+        print('')
         print_tile_status(tile)
         exit(0)
 
@@ -184,9 +186,9 @@ try:
     upload(tile)
     redirect(tile)
 
-except ValueError, e:
-    print 'Status: 404 Not Found'
-    print 'Content-type: text/plain'
-    print ''
-    print 'That doesn\'t look like a tile URL to me.'
-    print 'Error:', e
+except ValueError as e:
+    print('Status: 404 Not Found')
+    print('Content-type: text/plain')
+    print('')
+    print('That doesn\'t look like a tile URL to me.')
+    print('Error:', e)

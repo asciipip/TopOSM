@@ -158,6 +158,7 @@ Map {
             shield-name: [ref];
             shield-file: url('custom-symbols/shield-black-[length].png');
             shield-fill: white;
+            shield-size: 12;
         }
         [route_shield != ''] {
             shield-name: '';
@@ -184,6 +185,7 @@ Map {
             shield-name: [ref];
             shield-file: url('custom-symbols/shield-black-[length].png');
             shield-fill: white;
+            shield-size: 12;
         }
         [route_shield != ''] {
             shield-name: '';

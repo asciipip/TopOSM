@@ -50,9 +50,13 @@ Valid strategies are:
 
 """,
         formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument('--log-level', default='info',
+                        choices=['critical', 'error', 'warning', 'info', 'debug'])
     parser.add_argument('strategy', default=[('by_work_available', 1)], nargs='*', type=parse_strategy)
     args = parser.parse_args()
 
+    args.log_level = getattr(logging, args.log_level.upper())
+    
     return args
 
 
@@ -193,9 +197,9 @@ def metaTileNeedsRendering(z, x, y):
     ntiles = NTILES[z]
     return not tileExists(REFERENCE_TILESET, z, x*ntiles, y*ntiles) or isOldMetaTile(z, x, y)
 
-def logging_processor(queue):
+def logging_processor(log_level, queue):
     log_handler = logging.StreamHandler()
-    log_handler.setLevel(logging.DEBUG)
+    log_handler.setLevel(log_level)
     log_handler.setFormatter(logging.Formatter(
         '{asctime} [{processName}] {message}',
         style='{',
@@ -203,7 +207,7 @@ def logging_processor(queue):
     log_handler.addFilter(logging.Filter('toposm'))
     root = logging.getLogger()
     root.addHandler(log_handler)
-    root.setLevel(logging.DEBUG)
+    root.setLevel(log_level)
     while True:
         try:
             record = queue.get()
@@ -218,13 +222,13 @@ def logging_processor(queue):
     
 
 if __name__ == "__main__":
+    args = parse_args()
     log_queue = multiprocessing.Queue()
-    log_process = multiprocessing.Process(target=logging_processor, args=(log_queue,))
+    log_process = multiprocessing.Process(target=logging_processor, args=(args.log_level, log_queue))
     log_process.start()
     
     try:
         logger.info('Initializing.')
-        args = parse_args()
     
         conn = pika.BlockingConnection(pika.ConnectionParameters(host=DB_HOST))
         chan = conn.channel()

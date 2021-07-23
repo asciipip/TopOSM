@@ -198,7 +198,10 @@ def metaTileNeedsRendering(z, x, y):
     return not tileExists(REFERENCE_TILESET, z, x*ntiles, y*ntiles) or isOldMetaTile(z, x, y)
 
 def logging_processor(log_level, queue):
-    log_handler = logging.StreamHandler()
+    # This import is needed for some reason.
+    import sys
+    
+    log_handler = logging.StreamHandler(sys.stdout)
     log_handler.setLevel(log_level)
     log_handler.setFormatter(logging.Formatter(
         '{asctime} [{processName}] {message}',

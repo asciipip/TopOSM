@@ -237,7 +237,7 @@ if __name__ == "__main__":
     multiprocessing.set_start_method('spawn')
     
     args = parse_args()
-    log_queue = multiprocessing.Queue()
+    log_queue = multiprocessing.Manager().Queue()
     log_process = multiprocessing.Process(target=logging_processor, args=(args.log_level, log_queue))
     log_process.start()
     

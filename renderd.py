@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import argparse
 import json
 import os
 import platform
@@ -13,6 +14,14 @@ import xattr
 from env import *
 from toposm import *
 from stats import *
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('strategy', default='by_work_available', nargs='?')
+    args = parser.parse_args()
+
+    return args
 
 
 class ContinuousRenderThread:
@@ -154,12 +163,8 @@ def metaTileNeedsRendering(z, x, y):
 
 if __name__ == "__main__":
     console.printMessage('Initializing.')
+    args = parse_args()
 
-    if len(sys.argv) >= 2:
-        dequeue_strategy = sys.argv[1]
-    else:
-        dequeue_strategy = 'by_work_available'
-    
     conn = pika.BlockingConnection(pika.ConnectionParameters(host=DB_HOST))
     chan = conn.channel()
     chan.exchange_declare(exchange="osm", exchange_type="topic", durable=True, auto_delete=False)
@@ -168,5 +173,5 @@ if __name__ == "__main__":
     console.printMessage('Starting renderer.')
     rconn = pika.BlockingConnection(pika.ConnectionParameters(host=DB_HOST, heartbeat_interval=0))
     rchan = rconn.channel()
-    renderer = ContinuousRenderThread(dequeue_strategy, rchan, 0)
+    renderer = ContinuousRenderThread(args.strategy, rchan, 0)
     renderer.renderLoop()

@@ -61,7 +61,7 @@ Valid strategies are:
 
 
 class ContinuousRenderThread:
-    def __init__(self, dequeue_strategy, log_queue, ppid, threadNumber):
+    def __init__(self, dequeue_strategy, ppid, threadNumber):
         logger.info("Creating thread %d" % (threadNumber))
         self.dequeue_strategy = dequeue_strategy
         self.ppid = ppid
@@ -219,9 +219,20 @@ def logging_processor(log_level, queue):
             import sys, traceback
             print('Problem in logging thread:', file=sys.stderr)
             traceback.print_exc(file=sys.stderr)
+
+def render_thread(strategy, log_queue, ppid, thread_id):
+    root_logger = logging.getLogger()
+    root_logger.addHandler(logging.handlers.QueueHandler(log_queue))
+    root_logger.setLevel(logging.DEBUG)
+        
+    renderer = ContinuousRenderThread(strategy, ppid, thread_id)
+    renderer.renderLoop()
     
 
 if __name__ == "__main__":
+    # Enforce more thorough separation between processes.
+    multiprocessing.set_start_method('spawn')
+    
     args = parse_args()
     log_queue = multiprocessing.Queue()
     log_process = multiprocessing.Process(target=logging_processor, args=(args.log_level, log_queue))
@@ -235,17 +246,14 @@ if __name__ == "__main__":
         chan.exchange_declare(exchange="osm", exchange_type="topic", durable=True, auto_delete=False)
         conn.close()
         
-        root_logger = logging.getLogger()
-        root_logger.addHandler(logging.handlers.QueueHandler(log_queue))
-        root_logger.setLevel(logging.DEBUG)
-        
         logger.info('Starting renderer.')
         processes = []
         for strategy, count in args.strategy:
             for i in range(0, count):
                 thread_id = len(processes)
-                renderer = ContinuousRenderThread(strategy, log_queue, os.getpid(), thread_id)
-                process = multiprocessing.Process(target=renderer.renderLoop, name='{:02d} {}'.format(thread_id, strategy))
+                process = multiprocessing.Process(target=render_thread,
+                                                  args=(strategy, log_queue, os.getpid(), thread_id),
+                                                  name='{:02d} {}'.format(thread_id, strategy))
                 process.start()
                 processes.append(process)
         for process in processes:

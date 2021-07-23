@@ -161,7 +161,7 @@ def print_tile_status(t):
 
 try:
     components = os.environ['PATH_INFO'].split('/')[-4:]
-    if components[3] == 'status':
+    if components[3] in ('status', 'render'):
         command = components[-1]
         z, x, y = [ int(s) for s in components[:3] ]
         tile = Tile(z, x, y)
@@ -176,6 +176,13 @@ try:
         print('Content-type: text/plain')
         print('')
         print_tile_status(tile)
+        exit(0)
+
+    if command == 'render':
+        rerender(tile)
+        print('Content-type: text/plain')
+        print('')
+        print('Tile submitted for rendering.')
         exit(0)
 
     if not tile.exists(TILESET[0], TILESET[1]):

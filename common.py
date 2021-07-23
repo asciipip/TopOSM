@@ -6,7 +6,7 @@ import os, time, sys
 from os import path
 from threading import Lock
 
-import lockfile
+import filelock
 
 from env import *
 
@@ -34,7 +34,7 @@ errorLog = ErrorLog()
 
 
 # global locking object for file system ops (e.g. creating directories)
-fslock = lockfile.FileLock('/tmp/lock.TopOSM.fslock')
+fslock = filelock.FileLock('/tmp/lock.TopOSM.fslock')
 
 def ensureDirExists(path):
     with fslock:

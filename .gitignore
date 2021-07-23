@@ -23,4 +23,5 @@ errors.log
 geodata
 tile
 stats
+stats.lock
 temp

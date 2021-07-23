@@ -1,16 +1,16 @@
 #!/usr/bin/python
 
-import lockfile
 import os.path
 import pickle
 
+import filelock
 import influxdb
 
 from coords import *
 from env import *
 
 class StatsManager:
-    lock = lockfile.FileLock('stats')
+    lock = filelock.FileLock('stats.lock')
     def __init__(self):
         self.influx_client = influxdb.InfluxDBClient(database='toposm')
         with self.lock:

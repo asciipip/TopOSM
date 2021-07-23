@@ -5,6 +5,7 @@ import collections
 import datetime
 import dateutil.parser
 import json
+import logging
 import os
 import os.path
 import random
@@ -42,8 +43,9 @@ MAXIMUM_DATABASE_AGE = 30 * 60
 # One month (30 days)
 #MAXIMUM_DATABASE_AGE = 30 * 24 * 60 * 60
 
-def log_message(message):
-    console.printMessage(time.strftime('[%Y-%m-%d %H:%M:%S]') + ' ' + message)
+
+logger = logging.getLogger('toposm.queuemaster')
+
 
 def database_age():
     try:
@@ -103,7 +105,7 @@ class Renderer:
         if self.idle:
             mt = self.render_queue.dequeue(self.dequeue_strategy)
             if mt:
-                log_message('%s -> render %s' % (self.name, mt))
+                logger.info('%s -> render %s' % (self.name, mt))
                 self.working_on = mt
                 self.last_activity = time.time()
                 self.channel.basic_publish(
@@ -136,7 +138,7 @@ class Queue:
     def queue_metatile(self, mt, queue, source):
         assert mt.is_metatile
         if mt in self.pending_metatiles:
-            log_message('skipping pending metatile: {0}'.format(mt))
+            logger.info('skipping pending metatile: {0}'.format(mt))
             return
         added = False
         if queue is self.zoom_queues[mt.z]:
@@ -157,9 +159,9 @@ class Queue:
                     added = True
         if added:
             if source:
-                log_message('queue from %s: %s' % (source, mt))
+                logger.info('queue from %s: %s' % (source, mt))
             else:
-                log_message('queue: %s' % mt)
+                logger.info('queue: %s' % mt)
 
     def queue_tile(self, t, queue='zoom', source=None):
         assert not t.is_metatile
@@ -189,7 +191,7 @@ class Queue:
                 elif strategy == 'by_zoom':
                     mt = self.dequeue_by_zoom()
                 else:
-                    log_message('unknown dequeue strategy: %s' % strategy)
+                    logger.warning('unknown dequeue strategy: %s' % strategy)
                     return None
         if not mt:
             return None
@@ -276,7 +278,7 @@ class QueueFiller(threading.Thread):
         self.chan = self.conn.channel()
         
     def run(self):
-        log_message('Initializing queue.')
+        logger.info('Initializing queue.')
         for z in range(2, self.maxz + 1):
             with self.lock:
                 self.current_zoom = z
@@ -297,7 +299,7 @@ class QueueFiller(threading.Thread):
                     self.notify_queuemaster()
         with self.lock:
             self.current_zoom = -1
-        log_message('Queue initialized.')
+        logger.info('Queue initialized.')
 
     def notify_queuemaster(self):
         self.chan.basic_publish(
@@ -329,17 +331,17 @@ class TileExpirer(threading.Thread):
     def run(self):
         while self.keep_running or len(self.input_queue) > 0:
             if len(self.input_queue) > 0:
-                log_message('reading expiry input queue')
+                logger.info('reading expiry input queue')
                 expire = tileexpire.OSMTileExpire()
                 try:
                     while True:
                         t = self.input_queue.popleft()
                         expire.expire(t.z, t.x, t.y)
                 except IndexError:
-                    log_message('expiry input queue empty; expiring')
+                    logger.info('expiry input queue empty; expiring')
                     self.process_expire(expire)
                     self.notify_queuemaster()
-                    log_message('expiration pass finished')
+                    logger.info('expiration pass finished')
             else:
                 time.sleep(EXPIRE_SLEEP_INTERVAL)
 
@@ -453,16 +455,16 @@ class Queuemaster:
     def on_command_bind(self, frame):
         self.channel.basic_consume(self.on_command, queue=self.command_queue,
                                    exclusive=True)
-        log_message('queuemaster online')
+        logger.info('queuemaster online')
         self.channel.basic_publish(exchange='osm',
                                    routing_key='command.toposm',
                                    body=json.dumps({'command': 'queuemaster online'}))
 
     def on_cancel(self, frame):
-        log_message('AMQP cancelled: {}'.format(frame))
+        logger.info('AMQP cancelled: {}'.format(frame))
 
     def on_close(self, channel, reply_code, reply_text):
-        log_message('AMQP closed channel {}: {} ({})'.format(channel, reply_code, reply_text))
+        logger.info('AMQP closed channel {}: {} ({})'.format(channel, reply_code, reply_text))
         self.connection = pika.SelectConnection(
             pika.ConnectionParameters(host=DB_HOST), self.on_connection_open)
         self.connection.ioloop.start()
@@ -507,9 +509,9 @@ class Queuemaster:
             elif command == 'quit':
                 self.quit()
             else:
-                log_message('unknown message: %s' % body)
+                logger.warning('unknown message: %s' % body)
         except ValueError:
-            log_message('Non-JSON message: %s' % body)
+            logger.warning('Non-JSON message: %s' % body)
         chan.basic_ack(delivery_tag=method.delivery_tag)
 
     def get_stats(self):
@@ -536,7 +538,7 @@ class Queuemaster:
 
     def handle_render_request(self, t, props):
         if not t.is_valid:
-            log_message('ignoring request for invalid tile: %s' % t)
+            logger.warning('ignoring request for invalid tile: %s' % t)
             return
         if t.exists(REFERENCE_TILESET):
             importance = 'important'
@@ -555,22 +557,32 @@ class Queuemaster:
         try:
             self.influx_client.write_points(frames)
         except influxdb.exceptions.InfluxDBServerError as e:
-            log_message('InfluxDB error, reconnecting: {}'.format(e))
+            logger.warning('InfluxDB error, reconnecting: {}'.format(e))
             self.influx_client = influxdb.InfluxDBClient(database='toposm')
             time.sleep(1)
             self.send_queue_metrics()
         
     def quit(self):
-        log_message('Exiting.')
+        logger.info('Exiting.')
         self.channel.basic_cancel()
         self.initializer.quit()
         self.expirer.quit()
         self.expirer.join()
         self.initializer.join()
         self.connection.ioloop.stop()
-        log_message('Shutdown process concluded.')
+        logger.info('Shutdown process concluded.')
 
 
 if __name__ == "__main__":
+    log_handler = logging.StreamHandler()
+    log_handler.setLevel(logging.DEBUG)
+    log_handler.setFormatter(logging.Formatter(
+        '{asctime} {message}',
+        style='{',
+        datefmt='%Y-%m-%d %H:%M:%S'))
+    log_handler.addFilter(logging.Filter('toposm'))
+    root = logging.getLogger('toposm')
+    root.addHandler(log_handler)
+    root.setLevel(logging.DEBUG)
     qm = Queuemaster(16)
     qm.run()

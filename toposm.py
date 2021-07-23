@@ -3,6 +3,7 @@
 """toposm.py: Functions to control TopOSM rendering."""
 
 import functools
+import logging
 import os
 import sys
 import threading
@@ -58,6 +59,8 @@ JPEG_COMPOSITE_QUALITY = 90
 # Enable/disable the use of the cairo renderer altogether
 USE_CAIRO = False
 
+
+logger = logging.getLogger('toposm.main')
 
 @functools.total_ordering
 class Tile:
@@ -202,7 +205,7 @@ def renderMetaTile(z, x, y, ntiles, maps):
         images[layer] = renderMetatileLayer(layer, z, x, y, ntiles, maps[layer])
         layerTimes[layer] = time.time() - startTime
     composite_h = combineLayers(images)
-    console.debugMessage(' Saving tiles')
+    logger.debug('Saving tiles')
     if SAVE_PNG_COMPOSITE:
         saveTiles(z, x, y, ntiles, 'composite_h', composite_h)
     if SAVE_JPEG_COMPOSITE:
@@ -214,7 +217,7 @@ def renderMetaTile(z, x, y, ntiles, maps):
     return layerTimes
 
 def combineLayers(images):
-    console.debugMessage(' Combining layers')
+    logger.debug('Combining layers')
     images['contour-mask'].set_grayscale_to_alpha()
     images['features_mask'].set_grayscale_to_alpha()
     return getComposite((
@@ -231,9 +234,9 @@ def combineLayers(images):
 def renderMetatileLayer(name, z, x, y, ntiles, map):
     """Renders the specified map tile (layer) as a mapnik.Image."""
     if name in CACHE_LAYERS and cachedMetaTileExists(name, z, x, y, 'png'):
-        console.debugMessage(' Using cached:    ' + name)
+        logger.debug('Using cached:    ' + name)
         return mapnik.Image.open(getCachedMetaTilePath(name, z, x, y, 'png'))
-    console.debugMessage(' Rendering layer: ' + name)
+    logger.debug('Rendering layer: ' + name)
     env = getMercTileEnv(z, x, y, ntiles, True)
     tilesize = getTileSize(ntiles, True)
     image = renderLayerMerc(name, env, tilesize, tilesize, map)
@@ -312,7 +315,7 @@ def renderToPdf(envLL, filename, sizex, sizey):
     basefilename = os.path.splitext(filename)[0]
     mergedpdf = None
     for mapname in MAPNIK_LAYERS:
-        print('Rendering', mapname)
+        logger.debug('Rendering ' + mapname)
         # Render layer PDF.
         localfilename = basefilename + '_' + mapname + '.pdf';
         file = open(localfilename, 'wb')
@@ -351,7 +354,7 @@ class RenderPngThread(threading.Thread):
         map = mapnik.Map(self.sizex, self.sizey)
         mapnik.load_map(map, self.mapname + ".xml")
         result = renderLayerLL(self.mapname, self.envLL, self.sizex, self.sizey, map)
-        console.debugMessage(' Rendered layer: ' + self.mapname)
+        logger.debug('Rendered layer: ' + self.mapname)
         self.imagesLock.acquire()
         self.images[self.mapname] = result
         self.imagesLock.release()
@@ -361,7 +364,7 @@ def renderToPng(envLL, filename, sizex, sizey):
     images = {}
     imageLock = threading.Lock()
     threads = []
-    console.debugMessage(' Rendering layers')
+    logger.debug('Rendering layers')
     for mapname in MAPNIK_LAYERS:
         threads.append(RenderPngThread(mapname, envLL, sizex, sizey, images, imageLock))
         threads[-1].start()
@@ -379,6 +382,7 @@ def printSyntax():
     print("Areas are named entities in areas.py.")
 
 if __name__ == "__main__":
+    logging.basicConfig(format='%(asctime)s %(message)s', level=logging.DEBUG)
     if len(sys.argv) == 1:
         printSyntax()
         sys.exit(1)

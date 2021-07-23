@@ -15,17 +15,6 @@ __copyright__   = "(c) Lars Ahlzen 2008-2011"
 __license__     = "GPLv2"
 
 
-class ConsoleManager:
-    lock = Lock()
-    def printMessage(self, message):
-        ConsoleManager.lock.acquire()
-        print(message)
-        sys.stdout.flush()
-        ConsoleManager.lock.release()
-    def debugMessage(self, message):
-        if TOPOSM_DEBUG:
-            self.printMessage(message)
-
 class ErrorLog:
     lock = Lock()
     def log(self, message, exception = None):
@@ -41,7 +30,6 @@ class ErrorLog:
         finally:
             ErrorLog.lock.release()        
 
-console = ConsoleManager()
 errorLog = ErrorLog()
 
 

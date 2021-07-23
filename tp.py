@@ -25,7 +25,7 @@ CONTENT_TYPES = {'jpg': 'image/jpeg', 'png': 'image/png'}
 LOW_BANDWIDTH_TILESET = ('jpeg90_h', 'jpg')
 HIGH_BANDWIDTH_TILESET = ('composite_h', 'png')
 
-LOCAL_BASE = 'elros.aperiodic.net/phil/tiles'
+LOCAL_BASE = '/osm/tiles'
 
 # Don't rerender tiles if their zoom level is lower than this.
 RERENDER_MIN_ZOOM = 13
@@ -140,7 +140,7 @@ def redirect(t):
     if AWS_UPLOAD:
         print('Location: http://{0}{1}'.format(AWS_BUCKET, get_tile_url(TILESET, t)))
     else:
-        print('Location: http://{0}{1}'.format(LOCAL_BASE, get_tile_url(TILESET, t)))
+        print('Location: http://{}{}{}'.format(os.environ['SERVER_NAME'], LOCAL_BASE, get_tile_url(TILESET, t)))
     print('')
     exit(0)
 

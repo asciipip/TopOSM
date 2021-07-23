@@ -19,9 +19,38 @@ from toposm import *
 from stats import *
 
 
+def parse_strategy(candidate):
+    if ':' in candidate:
+        strategy, count_str = candidate.split(':')
+        count = int(count_str)
+    else:
+        strategy = candidate
+        count = 1
+    return (strategy, count)
+        
 def parse_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('strategy', default='by_work_available', nargs='?')
+    parser = argparse.ArgumentParser(
+        epilog="""
+Each `strategy' entry can either be the name of a dequeueing strategy
+("by_zoom") or a name followed by a colon and a number ("by_zoom:2").
+This gives the number of parallel processes to start with the named
+dequeueing strategy.  A missing number is equivalent to a single process.
+
+Multiple strategy entries may be given to cause the creation of processes
+with different dequeueing strategies.
+
+Valid strategies are:
+ * missing - only render requested-but-absent tiles
+ * important - only process important rerenders and missing tiles
+ * by_zoom - continuously rerender old tiles, prioritizing tiles at high
+   zoom levels.
+ * by_work_available - continuously rerender old tiles, prioritizing tiles
+   from zoom levels with the greatest amount of rerendering work
+   available.
+
+""",
+        formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument('strategy', default=[('by_work_available', 1)], nargs='*', type=parse_strategy)
     args = parser.parse_args()
 
     return args
@@ -40,8 +69,9 @@ class ContinuousRenderThread:
         
         rconn = pika.BlockingConnection(pika.ConnectionParameters(host=DB_HOST, heartbeat_interval=0))
         self.chan = rconn.channel()
-        
-        self.commandQueue = self.chan.queue_declare(exclusive=True).method.queue
+
+        self.commandQueue = 'toposm-render-{}-{}-{}'.format(os.uname()[1], ppid, threadNumber)
+        self.chan.queue_declare(self.commandQueue, exclusive=True)
         self.chan.queue_bind(queue=self.commandQueue, exchange='osm', routing_key='command')
         self.chan.queue_bind(queue=self.commandQueue, exchange='osm', routing_key='command.{0}'.format(os.uname()[1]))
         self.chan.queue_bind(queue=self.commandQueue, exchange='osm', routing_key='command.toposm')
@@ -192,22 +222,32 @@ if __name__ == "__main__":
     log_process = multiprocessing.Process(target=logging_processor, args=(log_queue,))
     log_process.start()
     
-    logger.info('Initializing.')
-    args = parse_args()
-
-    conn = pika.BlockingConnection(pika.ConnectionParameters(host=DB_HOST))
-    chan = conn.channel()
-    chan.exchange_declare(exchange="osm", exchange_type="topic", durable=True, auto_delete=False)
-    conn.close()
-
-    root_logger = logging.getLogger()
-    root_logger.addHandler(logging.handlers.QueueHandler(log_queue))
-    root_logger.setLevel(logging.DEBUG)
+    try:
+        logger.info('Initializing.')
+        args = parse_args()
     
-    logger.info('Starting renderer.')
-    renderer = ContinuousRenderThread(args.strategy, log_queue, os.getpid(), 0)
-    process = multiprocessing.Process(target=renderer.renderLoop, name=str(0))
-    process.start()
-    process.join()
-    log_queue.put(None)
-    log_process.join()
+        conn = pika.BlockingConnection(pika.ConnectionParameters(host=DB_HOST))
+        chan = conn.channel()
+        chan.exchange_declare(exchange="osm", exchange_type="topic", durable=True, auto_delete=False)
+        conn.close()
+        
+        root_logger = logging.getLogger()
+        root_logger.addHandler(logging.handlers.QueueHandler(log_queue))
+        root_logger.setLevel(logging.DEBUG)
+        
+        logger.info('Starting renderer.')
+        processes = []
+        for strategy, count in args.strategy:
+            for i in range(0, count):
+                thread_id = len(processes)
+                renderer = ContinuousRenderThread(strategy, log_queue, os.getpid(), thread_id)
+                process = multiprocessing.Process(target=renderer.renderLoop, name='{:02d} {}'.format(thread_id, strategy))
+                process.start()
+                processes.append(process)
+        for process in processes:
+            process.join()
+
+    finally:
+        logger.info('Terminating.')
+        log_queue.put(None)
+        log_process.join()

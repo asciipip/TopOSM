@@ -3,6 +3,8 @@
 import argparse
 import json
 import logging
+import logging.handlers
+import multiprocessing
 import os
 import platform
 import sys
@@ -17,9 +19,6 @@ from toposm import *
 from stats import *
 
 
-logger = logging.getLogger('toposm.renderd')
-
-
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('strategy', default='by_work_available', nargs='?')
@@ -29,24 +28,29 @@ def parse_args():
 
 
 class ContinuousRenderThread:
-    def __init__(self, dequeue_strategy, amqp_channel, threadNumber):
+    def __init__(self, dequeue_strategy, log_queue, ppid, threadNumber):
         logger.info("Creating thread %d" % (threadNumber))
         self.dequeue_strategy = dequeue_strategy
-        self.chan = amqp_channel
+        self.ppid = ppid
         self.threadNumber = threadNumber
         self.tilesizes = []
         self.maps = []
 
+        self.logger = logging.getLogger('toposm.renderd')
+        
+        rconn = pika.BlockingConnection(pika.ConnectionParameters(host=DB_HOST, heartbeat_interval=0))
+        self.chan = rconn.channel()
+        
         self.commandQueue = self.chan.queue_declare(exclusive=True).method.queue
         self.chan.queue_bind(queue=self.commandQueue, exchange='osm', routing_key='command')
         self.chan.queue_bind(queue=self.commandQueue, exchange='osm', routing_key='command.{0}'.format(os.uname()[1]))
         self.chan.queue_bind(queue=self.commandQueue, exchange='osm', routing_key='command.toposm')
         self.chan.queue_bind(queue=self.commandQueue, exchange='osm', routing_key='command.toposm.render')
         self.chan.queue_bind(queue=self.commandQueue, exchange='osm', routing_key='command.toposm.render.{0}'.format(os.uname()[1]))
-        self.chan.queue_bind(queue=self.commandQueue, exchange='osm', routing_key='command.toposm.render.{0}.{1}'.format(os.uname()[1], os.getpid()))
-        self.chan.queue_bind(queue=self.commandQueue, exchange='osm', routing_key='command.toposm.render.{0}.{1}.{2}'.format(os.uname()[1], os.getpid(), threadNumber + 1))
+        self.chan.queue_bind(queue=self.commandQueue, exchange='osm', routing_key='command.toposm.render.{0}.{1}'.format(os.uname()[1], ppid))
+        self.chan.queue_bind(queue=self.commandQueue, exchange='osm', routing_key='command.toposm.render.{0}.{1}.{2}'.format(os.uname()[1], ppid, threadNumber + 1))
         self.chan.basic_consume(self.on_command, queue=self.commandQueue)
-        logger.info("Created thread")
+        self.logger.info("Created thread")
 
     def loadMaps(self, zoom):
         if len(self.maps) <= zoom:
@@ -54,16 +58,16 @@ class ContinuousRenderThread:
             self.maps.extend([None] * (zoom - len(self.maps) + 1))
         self.maps[zoom] = {}
         for mapname in MAPNIK_LAYERS:
-            logger.debug('Loading mapnik.Map: {0}/{1}'.format(zoom, mapname))
+            self.logger.debug('Loading mapnik.Map: {0}/{1}'.format(zoom, mapname))
             self.maps[zoom][mapname] = mapnik.Map(self.tilesizes[zoom], self.tilesizes[zoom])
             mapnik.load_map(self.maps[zoom][mapname], mapname + ".xml")
 
     def runAndLog(self, message, function, args):
-        logger.info(message)
+        self.logger.info(message)
         try:
             return function(*args)        
         except Exception as ex:
-            logger.exception('Failed: ' + message)
+            self.logger.exception('Failed: ' + message)
             raise
 
     def renderMetaTileFromMsg(self, mt):
@@ -72,16 +76,16 @@ class ContinuousRenderThread:
         start_time = time.time()
         layerTimes = None
         if metaTileNeedsRendering(mt.z, mt.x, mt.y):
-            logger.info('Rendering {0}'.format(mt))
+            self.logger.info('Rendering {0}'.format(mt))
             if len(self.maps) <= mt.z or not self.maps[mt.z]:
                 self.loadMaps(mt.z)
             try:
                 layerTimes = renderMetaTile(mt.z, mt.x, mt.y, NTILES[mt.z], self.maps[mt.z])
             except:
-                logger.exception('Failed to render {}'.format(mt))
+                self.logger.exception('Failed to render {}'.format(mt))
         if layerTimes:
             stats.recordRender(mt, time.time() - start_time, layerTimes)
-        logger.debug('Notifying queuemaster of completion.')
+        self.logger.debug('Notifying queuemaster of completion.')
         self.chan.basic_publish(
             exchange='osm',
             routing_key='toposm.rendered.{0}.{1}.{2}'.format(mt.z, mt.x, mt.y),
@@ -92,7 +96,7 @@ class ContinuousRenderThread:
 
     def on_command(self, chan, method, props, body):
         body = body.decode('utf-8')
-        logger.debug('Received message: ' + body)
+        self.logger.debug('Received message: ' + body)
         message = json.loads(body)
         if 'command' in message:
             command = message['command']
@@ -107,13 +111,13 @@ class ContinuousRenderThread:
             elif command == 'render':
                 self.renderMetaTileFromMsg(Tile.fromjson(message['metatile']))
             else:
-                logger.warning('Unknown command: ' + body)
+                self.logger.warning('Unknown command: ' + body)
         else:
-            logger.warning('Unrecognized message: ' + body)
+            self.logger.warning('Unrecognized message: ' + body)
         chan.basic_ack(delivery_tag=method.delivery_tag)
 
     def register(self):
-        logger.info('Registering with queuemaster.')
+        self.logger.info('Registering with queuemaster.')
         self.chan.basic_publish(
             exchange='osm',
             routing_key='toposm.queuemaster',
@@ -122,11 +126,11 @@ class ContinuousRenderThread:
             body=json.dumps({'command': 'register',
                              'strategy': self.dequeue_strategy,
                              'hostname': platform.node(),
-                             'pid': os.getpid(),
+                             'pid': self.ppid,
                              'threadid': self.threadNumber}))
 
     def unregister(self):
-        logger.info('Unregistering with queuemaster.')
+        self.logger.info('Unregistering with queuemaster.')
         pika.BlockingConnection(pika.ConnectionParameters(host=DB_HOST)).\
             channel().basic_publish(
                 exchange='osm',
@@ -159,19 +163,35 @@ def metaTileNeedsRendering(z, x, y):
     ntiles = NTILES[z]
     return not tileExists(REFERENCE_TILESET, z, x*ntiles, y*ntiles) or isOldMetaTile(z, x, y)
 
-
-if __name__ == "__main__":
+def logging_processor(queue):
     log_handler = logging.StreamHandler()
     log_handler.setLevel(logging.DEBUG)
     log_handler.setFormatter(logging.Formatter(
-        '{asctime} [{threadName}] {message}',
+        '{asctime} [{processName}] {message}',
         style='{',
         datefmt='%Y-%m-%d %H:%M:%S'))
     log_handler.addFilter(logging.Filter('toposm'))
-    root = logging.getLogger('toposm')
+    root = logging.getLogger()
     root.addHandler(log_handler)
     root.setLevel(logging.DEBUG)
+    while True:
+        try:
+            record = queue.get()
+            if record is None:
+                break
+            logger = logging.getLogger(record.name)
+            logger.handle(record)
+        except Exception:
+            import sys, traceback
+            print('Problem in logging thread:', file=sys.stderr)
+            traceback.print_exc(file=sys.stderr)
+    
 
+if __name__ == "__main__":
+    log_queue = multiprocessing.Queue()
+    log_process = multiprocessing.Process(target=logging_processor, args=(log_queue,))
+    log_process.start()
+    
     logger.info('Initializing.')
     args = parse_args()
 
@@ -180,8 +200,14 @@ if __name__ == "__main__":
     chan.exchange_declare(exchange="osm", exchange_type="topic", durable=True, auto_delete=False)
     conn.close()
 
+    root_logger = logging.getLogger()
+    root_logger.addHandler(logging.handlers.QueueHandler(log_queue))
+    root_logger.setLevel(logging.DEBUG)
+    
     logger.info('Starting renderer.')
-    rconn = pika.BlockingConnection(pika.ConnectionParameters(host=DB_HOST, heartbeat_interval=0))
-    rchan = rconn.channel()
-    renderer = ContinuousRenderThread(args.strategy, rchan, 0)
-    renderer.renderLoop()
+    renderer = ContinuousRenderThread(args.strategy, log_queue, os.getpid(), 0)
+    process = multiprocessing.Process(target=renderer.renderLoop, name=str(0))
+    process.start()
+    process.join()
+    log_queue.put(None)
+    log_process.join()

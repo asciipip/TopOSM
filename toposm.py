@@ -2,15 +2,14 @@
 
 """toposm.py: Functions to control TopOSM rendering."""
 
-import sys, os, time, threading, functools
-import numpy as np
-import multiprocessing
+import functools
+import os
+import sys
+import threading
+import time
+
 import cairo
 import xattr
-
-#from Queue import Queue
-from os import path
-from subprocess import call
 
 # PyPdf is optional, but render-to-pdf won't work without it.
 try:
@@ -42,7 +41,7 @@ if EXTRA_FONTS_DIR != '':
 # Check for cairo support
 if not mapnik.has_cairo():
     print("ERROR: Your mapnik does not have Cairo support.")
-    sys.exit(1)
+    exit(1)
 
 
 ##### Render settings
@@ -160,29 +159,29 @@ class Tile:
 
 
 def getCachedMetaTileDir(mapname, z, x):
-    return path.join(TEMPDIR, mapname, str(z), str(x))
+    return os.path.join(TEMPDIR, mapname, str(z), str(x))
 
 def getCachedMetaTilePath(mapname, z, x, y, suffix = "png"):
-    return path.join(getCachedMetaTileDir(mapname, z, x), str(y) + '.' + suffix)
+    return os.path.join(getCachedMetaTileDir(mapname, z, x), str(y) + '.' + suffix)
 
 def cachedMetaTileExists(mapname, z, x, y, suffix = "png"):
-    return path.isfile(getCachedMetaTilePath(mapname, z, x, y, suffix))
+    return os.path.isfile(getCachedMetaTilePath(mapname, z, x, y, suffix))
 
 def getMetaTileDir(mapname, z):
-    return path.join(BASE_TILE_DIR, mapname, str(z))
+    return os.path.join(BASE_TILE_DIR, mapname, str(z))
 
 def getMetaTilePath(mapname, z, x, y, suffix = "png"):
-    return path.join(getMetaTileDir(mapname, z), \
+    return os.path.join(getMetaTileDir(mapname, z), \
         's' + str(x) + '_' + str(y) + '.' + suffix)
 
 def getTileDir(mapname, z, x):
-    return path.join(getMetaTileDir(mapname, z), str(x))
+    return os.path.join(getMetaTileDir(mapname, z), str(x))
 
 def getTilePath(mapname, z, x, y, suffix = "png"):
-    return path.join(getTileDir(mapname, z, x), str(y) + '.' + suffix)
+    return os.path.join(getTileDir(mapname, z, x), str(y) + '.' + suffix)
 
 def tileExists(mapname, z, x, y, suffix = "png"):
-    return path.isfile(getTilePath(mapname, z, x, y, suffix))
+    return os.path.isfile(getTilePath(mapname, z, x, y, suffix))
 
 def tileIsOld(z, x, y):
     return b'user.toposm_dirty' in xattr.list(getTilePath(REFERENCE_TILESET, z, x, y))
@@ -410,4 +409,4 @@ if __name__ == "__main__":
         toposmInfo()
     else:
         printSyntax()
-        sys.exit(1)
+        exit(1)

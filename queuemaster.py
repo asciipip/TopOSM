@@ -467,6 +467,9 @@ class Queuemaster:
         logger.info('AMQP cancelled: {}'.format(frame))
 
     def on_close(self, channel, reply_code, reply_text):
+        if reply_code == 0:
+            # Closed from this end; don't try to reopen.
+            return
         logger.info('AMQP closed channel {}: {} ({})'.format(channel, reply_code, reply_text))
         self.connection = pika.SelectConnection(
             pika.ConnectionParameters(host=DB_HOST), self.on_connection_open)
@@ -517,7 +520,8 @@ class Queuemaster:
                 logger.warning('unknown message: %s' % body)
         except ValueError:
             logger.exception('Non-JSON message: %s' % body)
-        chan.basic_ack(delivery_tag=method.delivery_tag)
+        if chan.is_open:
+            chan.basic_ack(delivery_tag=method.delivery_tag)
 
     def get_stats(self):
         result = {'queue': self.queue.get_stats(),
@@ -569,12 +573,12 @@ class Queuemaster:
         
     def quit(self):
         logger.info('Exiting.')
-        self.channel.close()
         self.initializer.quit()
         self.expirer.quit()
         self.expirer.join()
         self.initializer.join()
-        self.connection.ioloop.stop()
+        self.connection.close()
+        self.connection.ioloop.start()
         logger.info('Shutdown process concluded.')
 
 

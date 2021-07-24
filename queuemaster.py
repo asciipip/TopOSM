@@ -449,6 +449,9 @@ class Queuemaster:
             None, queue=self.command_queue,
             exchange='osm', routing_key='toposm.rendered.#')
         self.channel.queue_bind(
+            None, queue=self.command_queue,
+            exchange='osm', routing_key='toposm')
+        self.channel.queue_bind(
             self.on_command_bind, queue=self.command_queue,
             exchange='osm', routing_key='toposm.queuemaster')
 
@@ -457,7 +460,7 @@ class Queuemaster:
                                    exclusive=True)
         logger.info('queuemaster online')
         self.channel.basic_publish(exchange='osm',
-                                   routing_key='command.toposm',
+                                   routing_key='toposm',
                                    body=json.dumps({'command': 'queuemaster online'}))
 
     def on_cancel(self, frame):
@@ -508,6 +511,8 @@ class Queuemaster:
                 self.send_render_requests()
             elif command == 'quit':
                 self.quit()
+            elif command == 'queuemaster online':
+                pass
             else:
                 logger.warning('unknown message: %s' % body)
         except ValueError:

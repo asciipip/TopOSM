@@ -76,13 +76,11 @@ class ContinuousRenderThread:
 
         self.commandQueue = 'toposm-render-{}-{}-{}'.format(os.uname()[1], ppid, threadNumber)
         self.chan.queue_declare(self.commandQueue, exclusive=True)
-        self.chan.queue_bind(queue=self.commandQueue, exchange='osm', routing_key='command')
-        self.chan.queue_bind(queue=self.commandQueue, exchange='osm', routing_key='command.{0}'.format(os.uname()[1]))
-        self.chan.queue_bind(queue=self.commandQueue, exchange='osm', routing_key='command.toposm')
-        self.chan.queue_bind(queue=self.commandQueue, exchange='osm', routing_key='command.toposm.render')
-        self.chan.queue_bind(queue=self.commandQueue, exchange='osm', routing_key='command.toposm.render.{0}'.format(os.uname()[1]))
-        self.chan.queue_bind(queue=self.commandQueue, exchange='osm', routing_key='command.toposm.render.{0}.{1}'.format(os.uname()[1], ppid))
-        self.chan.queue_bind(queue=self.commandQueue, exchange='osm', routing_key='command.toposm.render.{0}.{1}.{2}'.format(os.uname()[1], ppid, threadNumber + 1))
+        self.chan.queue_bind(queue=self.commandQueue, exchange='osm', routing_key='toposm')
+        self.chan.queue_bind(queue=self.commandQueue, exchange='osm', routing_key='toposm.render')
+        self.chan.queue_bind(queue=self.commandQueue, exchange='osm', routing_key='toposm.render.{0}'.format(os.uname()[1]))
+        self.chan.queue_bind(queue=self.commandQueue, exchange='osm', routing_key='toposm.render.{0}.{1}'.format(os.uname()[1], ppid))
+        self.chan.queue_bind(queue=self.commandQueue, exchange='osm', routing_key='toposm.render.{0}.{1}.{2}'.format(os.uname()[1], ppid, threadNumber + 1))
         self.chan.basic_consume(self.on_command, queue=self.commandQueue)
         self.logger.info("Created thread")
 

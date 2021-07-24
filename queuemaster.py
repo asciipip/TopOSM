@@ -511,7 +511,7 @@ class Queuemaster:
             else:
                 logger.warning('unknown message: %s' % body)
         except ValueError:
-            logger.warning('Non-JSON message: %s' % body)
+            logger.exception('Non-JSON message: %s' % body)
         chan.basic_ack(delivery_tag=method.delivery_tag)
 
     def get_stats(self):
@@ -564,7 +564,7 @@ class Queuemaster:
         
     def quit(self):
         logger.info('Exiting.')
-        self.channel.basic_cancel()
+        self.channel.close()
         self.initializer.quit()
         self.expirer.quit()
         self.expirer.join()

@@ -1,3 +1,37 @@
+## Medium
+
+All communications are via AMQP, on the `osm` exchange.
+
+Tile expirations should be sent to the `expire_toposm` topic.
+
+All running programs listen for commands on the `toposm` topic.
+
+The queuemaster listens for commands on the `toposm.queuemaster` topic.
+
+Rendering threads may be addressed via a hierarchy.  An individual thread
+will be addressable at the `toposm.render.<hostname>.<pid>.<id>` topic.
+E.g. thread number 3 launched by the process with PID 55823 running on
+host "vader" would be addressed as `toposm.render.vader.55823.3`.  All
+rendering threads listen to all levels of the hierarchy, so a message sent
+to `toposm.render` would be received by all rendering threads, and one
+sent to `toposm.render.vader` would be received by all reads running on
+host "vader".
+
+
+## Messages
+
+### Tile Expirations
+
+Tile expirations are very simple.  They should be the tile address in
+"z/x/y" format, with multiple tiles separated by semicolons.
+e.g. `14/5672/3452;14/5673/3452;14/5672/3453`.
+
+
+### Commands and Responses
+
+All other communications between the queuemaster and other programs follow
+the format described below.
+
 Messages are all JSON.
 
 Command:
@@ -52,6 +86,8 @@ renderer -> queuemaster
 All renderer -> queuemaster communication should have the renderer's queue
 as the "reply_to" property.
 
+
+## Rendering Example
 
 Normal render request sequence:
 

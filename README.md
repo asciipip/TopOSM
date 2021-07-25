@@ -1,141 +1,132 @@
-# TopOSM #
+# Phil's TopOSM Variant
 
-A system for rendering OpenStreetMap Based Topographic Maps
+This is my ([Phil Gold's](mailto:phil_g@pobox.com)) repository for
+rendering [OpenStreetMap](https://www.openstreetmap.org/) data.  It's
+based on Lars Ahlzen's [TopOSM](http://toposm.ahlzen.com/), but I've
+modified it significantly according to what I want to see in a map.
+
+This repository contains the map stylesheets as well as the core programs
+for rendering and continuously rerendering a minutely-updated OSM
+database.
 
 
 ## Requirements ##
 
-TopOSM runs on Linux. It may be possible to build and run it on other platforms, but I have not tested this. If you try it, please let me know.
+I use a pretty standard OSM rendering stack:
 
-TopOSM depends on some fairly recent software, including:
+ * PostgreSQL and PostGIS to store the data
+ * osm2pgsql to import the data
+ * osmosis to extract data for North America, plus follow minutely updates
+ * GDAL and ImageMagick to process elevation data
+ * Mapnik to render the maps
+ * OSM "external data", principally the ocean shapefiles
 
-* Mapnik (2.0) with included patches and Cairo support
-* Python (2.6)
-* GDAL (1.7)
-* PostgreSQL + PostGIS
-* ImageMagick
+In addition, I use some less common things:
 
-(later versions than those mentioned above will probably work)
+ * [osm-shields][] for specialized route shield images
+ * RabbitMQ (any AMQP server would do) to coordinate the rendering queues
+ * InfluxDB to record rendering statistics
+
+  [osm-shields]: https://gitlab.com/asciiphil/osm-shields
+
+And my full rendering stack needs stuff from two other repositories:
+
+ * Mapnik minutely updates (not yet uploaded anywhere)
+ * Elevation data and processing pipeline (not yet uploaded anywhere)
+
+Pretty much everything is written in Python.  The following modules are used:
+
+ * PyPDF2
+ * amqplib
+ * boto
+ * cairo
+ * dateutil
+ * filelock
+ * influxdb
+ * mapnik
+ * pika
+ * xattr
 
 
 ## Installation ##
 
-Required packages will vary depending on your distribution. For Ubuntu 11.04, this list of packages may be a good start:
-
-    python-mapnik mapnik-utils gdal-bin gdal-contrib python-gdal
-    libgdal-dev proj libproj-dev python-pyproj python-numpy imagemagick
-    gcc g++ optipng subversion postgresql postgresql-contrib
-    postgresql-server-dev-8.4 postgis wget libxml2-dev python-libxml2
-    libgeos-dev libbz2-dev make htop python-cairo python-cairo-dev
-    osm2pgsql unzip python-pypdf libboost-all-dev libicu-dev libpng-dev
-    libjpeg-dev libtiff-dev libz-dev libfreetype6-dev libxml2-dev
-    libproj-dev libcairo-dev libcairomm-1.0-dev python-cairo-dev
-    libpq-dev libgdal-dev libsqlite3-dev libcurl4-gnutls-dev
-    libsigc++-dev libsigc++-2.0-dev ttf-sil-gentium
-    ttf-mscorefonts-installer "ttf-adf-*"
-
-Set up PostgreSQL with PostGIS, see:
-http://wiki.openstreetmap.org/wiki/Mapnik/PostGIS
+TBD
 
 
-### Build local patched Mapnik ###
+## File Structure ##
 
-```
-$ git clone https://github.com/mapnik/mapnik.git
-$ cd mapnik
-$ patch -p0 < <toposm-dir>/mapnik2_erase_patch.diff
-$ python scons/scons.py configure \
-    INPUT_PLUGINS=raster,osm,gdal,shape,postgis,ogr \
-    PREFIX=$HOME PYTHON_PREFIX=$HOME
-$ python scons/scons.py
-$ python scons/scons.py install
-```
+### Configuration ###
 
-If you need a more recent boost than available for your system, you can build one locally (i.e. with PREFIX=$HOME) and tell the mapnik configure step to link against that by adding:
+`set-toposm-env.templ` should be copied to `set-toposm-env` and edited
+with appropriate local configuration values.
 
-```
-BOOST_INCLUDES=$HOME/include BOOST_LIBS=$HOME/lib
-```
+Before using any of the programs here, either source `set-toposm-env`, e.g.:
+
+    . ./set-toposm-env
+
+Or use the `with-toposm-env` wrapper:
+
+    ./with-toposm-env queue_stats.py
 
 
-### Required data files ###
+### Map Stylesheets ###
 
-* http://tile.openstreetmap.org/world_boundaries-spherical.tgz
-* http://tile.openstreetmap.org/processed_p.tar.bz2
-* http://tile.openstreetmap.org/shoreline_300.tar.bz2
-* http://www.naturalearthdata.com/download/10m/cultural/10m-populated-places.zip
-* http://www.naturalearthdata.com/download/110m/cultural/110m-admin-0-boundary-lines.zip
-* USGS NHD shapefiles: http://209.98.153.33/nhd/
-* USGS NED data, as needed: http://209.98.153.33/ned/13arcsec/grid/
-* NLCD 2006 (Land cover) data: http://www.mrlc.gov/nlcd06_data.php
-* Planet.osm or other OSM dataset: http://planet.openstreetmap.org/
-* Water polygons (in spherical mercator) from http://openstreetmapdata.com/
+The stylesheets are in the `carto` directory and use CartoCSS.  They use
+images in the `symbols` and `custom-symbols` directories.
+
+There's a Makefile for updating the Mapnik stylesheets, so you can just
+run `make` after editing any of the CartoCSS files.
 
 
-### Configuring the Rendering Environment ###
+### Rendering Programs ###
 
-Create the required directories for tiles and temp files:
+The heart of the tile rendering is `queuemaster.py`.  It listens for tile
+requests and expirations (more on those shortly) and issues commands to
+the rendering daemons to direct rendering of particular tiles.
 
-```
-$ mkdir -p temp tile
-```
+Tiles are requested by `tp.py`.  It's intended to run as a CGI program on
+a web server (via the tp.cgi wrapper, which sets the TopOSM environment
+for it).  As it's called for each tile, it check to see if the tile exists
+and is up to date.  If it is, it serves the tile image.  If not (it
+doesn't exist or it's out of date), `tp.py` sends a rendering request via
+AMQP to the queuemaster and waits for a response.  It has some logic for
+waiting different amounts of time in different cases and optionally
+uploading the tiles to Amazon S3 before serving.  (Some of that logic is
+currently hardcoded and really ought to be more configurable.)
 
-TopOSM is configured through environment variables. A template for this is included. Make a copy, modify it according to you system, and source it:
+When minutely updates are processed, a program (not part of this
+repository) sends the expired tile list from osmosis to the queuemaster
+via AMQP.  The queuemaster checks to see which existing tile files are
+affected by the expiration and: (1) marks them as dirty in the filesystem
+using extended file attributes; and (2) adds them to its rendering queues.
 
-```
-$ cp set-toposm-env.templ set-toposm-env
-$ emacs set-toposm-env
-$ . set-toposm-env
-```
+`renderd.py` manages the rendering processes.  A single `renderd.py`
+invocation can create multiple rendering threads, with different dequeuing
+strategies.  I use the following command line on my 24-core, 128GB RAM
+system:
 
-Import OSM data. The import will be cropped to the area specified in set-toposm-env.
-```
-$ ./import_planet geodata/osm/Planet.osm
-```
+    renderd.py missing:2 by_work_available:6 by_zoom:2 important:4
 
-The import script can also import OSM daily diffs (ending in .osc.gz).
+`queue_stats.py` requests some statistics from the queuemaster and then
+prints them out.
 
+`expire_tiles.py` is theoretically for expiring tiles ad hoc.  I don't use
+it much, though, and it hasn't yet been updated to work on Python 3.
 
-Import NHD data:
-```
-$ ./import_nhd
-```
+`toposm.py` contains the meat of the actual map rendering.  It can also be
+run from the command line to render arbitrary images.  It uses `areas.py`,
+`common.py`, `coords.py`, and `env.py`.  Most of the other programs import
+toposm.  (`stats.py` and `tileexpire.py` are modules used by various of
+the above programs.)
 
-Generate hillshade and colormaps:
-```
-$ ./prep_toposm_data
-```
-Generate turning circle images:
-```
-$ ./generate_turning_circles.py
-```
-
-
-Add a shortcut for your area(s) of interest to areas.py.
-
-Generate the mapnik style files from templates:
-```
-$ ./generate_xml
-```
-(you need to do this every time you modify the styles in the
-templates and include directories)
-
-Create contour tables and generate contour lines, for example:
-```
-$ ./prep_contours_table
-$ ./toposm.py prep WhiteMountains
-```
-
-To render tiles for the specified area and zoom levels:
-```
-$ ./toposm.py render WhiteMountains 5 15
-```
-
-To render a PDF, use renderToPdf() in toposm.py
+Check out the `MESSAGE_PROTOCOL.md` file for more information about the
+communications between programs.
 
 
 ## Credits ##
 
-Created by Lars Ahlzen (lars@ahlzen.com), with contributions from Ian Dees (hosting, rendering and troubleshooting), Phil Gold (patches and style improvements), Kevin Kenny (improved NHD rendering, misc patches), Yves Cainaud (legend), Richard Weait (shield graphics) and others.
+TopOSM was originally created by Lars Ahlzen (lars@ahlzen.com), with
+contributions from Ian Dees, Phil Gold, Kevin Kenny, Yves Cainaud, Richard
+Weait, and others.
 
 License: GPLv2

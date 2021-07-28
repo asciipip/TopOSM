@@ -92,7 +92,7 @@ Layer:
     srs: *srs
     Datasource:
       type: shape
-      file: /home/phil/misc/mapnik/external-data/water-polygons-split-3857/water_polygons.shp
+      file: /opt/osm-external-data/water-polygons-split-3857/water_polygons.shp
   - id: waterareaoutlines_z7
     name: waterareaoutlines_z7
     class: waterareaoutlines_z7

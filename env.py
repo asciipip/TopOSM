@@ -23,6 +23,7 @@ TILE_SIZE = int(os.environ['TILE_SIZE'])
 BORDER_WIDTH = int(os.environ['BORDER_WIDTH'])
 ERRORLOG = os.environ['ERROR_LOG']
 TOPOSM_DEBUG = os.environ['TOPOSM_DEBUG']
+MINUTELY_STATE_FILE = os.environ['MINUTELY_STATE_FILE']
 EXTRA_FONTS_DIR = os.environ['EXTRA_FONTS_DIR']
 CACHE_LAYERS = frozenset(os.environ['CACHE_LAYERS'].split(','))
 DB_HOST = os.environ['DB_HOST']

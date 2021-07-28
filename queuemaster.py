@@ -32,8 +32,6 @@ RENDERER_STALE_TIME = 3600
 # before starting to render things.  (This prevents the renderers always being
 # asked to render stuff at zoom 2 to start with.)
 INITIAL_QUEUE_NOTIFY_ZOOM = 7
-# Where the minutely update file lives.
-MINUTELY_STATE_FILE = '/home/phil/misc/mapnik/updates/state.txt'
 # Maximum age of the database for rendering, in seconds.  If the database age is
 # greater than this, non-important rendering will cease until the database
 # catches up.

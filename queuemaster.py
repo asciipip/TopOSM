@@ -13,7 +13,6 @@ import re
 import threading
 
 # addon modules
-import influxdb
 import pika
 import xattr
 
@@ -407,7 +406,7 @@ class Queuemaster:
         self.expirer = TileExpirer(self.maxz, self.queue)
         self.expirer.start()
         self.renderers = {}
-        self.influx_client = influxdb.InfluxDBClient(database='toposm')
+        self.influx_client = connect_to_influxdb()
 
     ### Startup sequence.
     
@@ -567,7 +566,7 @@ class Queuemaster:
             self.influx_client.write_points(frames)
         except influxdb.exceptions.InfluxDBServerError as e:
             logger.warning('InfluxDB error, reconnecting: {}'.format(e))
-            self.influx_client = influxdb.InfluxDBClient(database='toposm')
+            self.influx_client = connect_to_influxdb()
             time.sleep(1)
             self.send_queue_metrics()
         

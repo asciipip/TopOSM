@@ -7,6 +7,7 @@ from os import path
 from threading import Lock
 
 import filelock
+import influxdb
 
 from env import *
 
@@ -40,3 +41,13 @@ def ensureDirExists(path):
     with fslock:
         if not os.path.isdir(path):
             os.makedirs(path)
+
+def connect_to_influxdb():
+    return influxdb.InfluxDBClient(
+        host=INFLUX_HOST,
+        port=INFLUX_PORT,
+        username=INFLUX_USER,
+        password=INFLUX_PASS,
+        ssl=INFLUX_SSL,
+        verify_ssl=True,
+        database=INFLUX_DB)

@@ -4,15 +4,15 @@ import os.path
 import pickle
 
 import filelock
-import influxdb
 
+from common import *
 from coords import *
 from env import *
 
 class StatsManager:
     lock = filelock.FileLock('stats.lock')
     def __init__(self):
-        self.influx_client = influxdb.InfluxDBClient(database='toposm')
+        self.influx_client = connect_to_influxdb()
         with self.lock:
             if not os.path.isfile('stats'):
                 with open('stats', 'wb') as f:

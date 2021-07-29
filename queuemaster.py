@@ -423,9 +423,16 @@ class Queuemaster:
             durable=True, auto_delete=False)
 
     def on_exchange_declare(self, frame):
-        self.channel.queue_declare(self.on_command_declare, exclusive=True)
-        self.channel.queue_declare(self.on_expire_declare, queue='expire_toposm',
-                                   durable=True, auto_delete=False)
+        self.channel.queue_declare(
+            queue='toposm-queuemaster',
+            callback=self.on_command_declare,
+            exclusive=True,
+            auto_delete=True)
+        self.channel.queue_declare(
+            queue='expire_toposm',
+            callback=self.on_expire_declare,
+            durable=True,
+            auto_delete=False)
             
     def on_expire_declare(self,frame):
         self.channel.queue_bind(

@@ -75,7 +75,7 @@ class ContinuousRenderThread:
         self.chan = rconn.channel()
 
         self.commandQueue = 'toposm-render-{}-{}-{}'.format(os.uname()[1], ppid, threadNumber)
-        self.chan.queue_declare(self.commandQueue, exclusive=True)
+        self.chan.queue_declare(self.commandQueue, exclusive=True, auto_delete=True)
         self.chan.queue_bind(queue=self.commandQueue, exchange='osm', routing_key='toposm')
         self.chan.queue_bind(queue=self.commandQueue, exchange='osm', routing_key='toposm.render')
         self.chan.queue_bind(queue=self.commandQueue, exchange='osm', routing_key='toposm.render.{0}'.format(os.uname()[1]))

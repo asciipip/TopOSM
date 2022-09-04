@@ -53,12 +53,12 @@ elif os.environ['HTTP_USER_AGENT'].startswith('OsmAnd'):
     # Mobile remote
     TILESET = LOW_BANDWIDTH_TILESET
     RERENDER_TIMEOUT = 0
-    AWS_UPLOAD = True
+    AWS_UPLOAD = False
 else:
     # Non-mobile remote
     TILESET = LOW_BANDWIDTH_TILESET
     RERENDER_TIMEOUT = 2
-    AWS_UPLOAD = True
+    AWS_UPLOAD = False
 
 # Bugfix.  New versions of boto don't work well if the S3 bucket has dots in its
 # name.  This works around that bug.
@@ -140,7 +140,7 @@ def redirect(t):
     if AWS_UPLOAD:
         print('Location: http://{0}{1}'.format(AWS_BUCKET, get_tile_url(TILESET, t)))
     else:
-        print('Location: http://{}{}{}'.format(os.environ['SERVER_NAME'], LOCAL_BASE, get_tile_url(TILESET, t)))
+        print('Location: https://{}{}{}'.format(os.environ['SERVER_NAME'], LOCAL_BASE, get_tile_url(TILESET, t)))
     print('')
     exit(0)
 

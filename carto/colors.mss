@@ -17,6 +17,8 @@
 @waterlinecolor: #15c;
 @waterfillcolor: #adf;
 @pipelinecolor: #600;
+@glacierfillcolor: #ccebff;
+@glacierlinecolor: #6e6e6e;
 
 @aerowaycolor: #99a;
 @aerowayoutlinecolor: #556;

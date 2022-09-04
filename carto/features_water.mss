@@ -191,8 +191,7 @@
         polygon-pattern-file: url('symbols/marsh.png');
     }
     [zoom >= 10][natural = 'glacier'] {
-        polygon-fill: #ffe0c0;
-        line-color: #888;
+        line-color: @glacierlinecolor;
         line-width: 0.7;
         line-dasharray: 5,5;
     }

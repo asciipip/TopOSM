@@ -53,8 +53,7 @@ Map {
         polygon-opacity: @areaopacity;
     }
     [zoom >= 10][natural = 'glacier'] {
-        polygon-fill: #cde;
-        polygon-opacity: @areaopacity;
+        polygon-fill: @glacierfillcolor;
     }
     [zoom >= 10][natural = 'heath'],
     [zoom >= 10][landuse = 'meadow'],

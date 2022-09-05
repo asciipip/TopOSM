@@ -54,6 +54,7 @@ Map {
     }
     [zoom >= 10][natural = 'glacier'] {
         polygon-fill: @glacierfillcolor;
+        polygon-opacity: @glacieropacity;
     }
     [zoom >= 10][natural = 'heath'],
     [zoom >= 10][landuse = 'meadow'],

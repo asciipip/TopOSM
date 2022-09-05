@@ -19,6 +19,7 @@
 @pipelinecolor: #600;
 @glacierfillcolor: #ccebff;
 @glacierlinecolor: #6e6e6e;
+@glacieropacity: 0.4;
 
 @aerowaycolor: #99a;
 @aerowayoutlinecolor: #556;

@@ -10,6 +10,6 @@
 
 @road-fonts: "Trebuchet MS Regular", "DejaVu Sans Book";
 
-@shield-fonts: "Roadgeek 2005 Series D Regular", "DejaVu Sans Bold";
+@shield-fonts: "Roadgeek 2014 Series D Regular", "DejaVu Sans Bold";
 
 @contour-fonts: "Trebuchet MS Regular", "DejaVu Sans Book";

@@ -378,6 +378,7 @@ def printSyntax():
     print(" toposm.py pdf <area> <filename> <sizeX> <sizeY>")
     print(" toposm.py png <area> <filename> <sizeX> <sizeY>")
     print(" toposm.py png-zoom <lon> <lat> <zoom> <filename> <sizeX> <sizeY>")
+    print(" toposm.py list-fonts")
     print(" toposm.py info")
     print("Areas are named entities in areas.py.")
 
@@ -409,6 +410,9 @@ if __name__ == "__main__":
                               center_px.x + sizex / 2, center_px.y + sizey / 2),
                         zoom)
         renderToPng(env, filename, sizex, sizey)
+    elif cmd == 'list-fonts':
+        for fontname in sorted(mapnik.FontEngine.face_names()):
+            print(fontname)
     elif cmd == 'info':
         toposmInfo()
     else:

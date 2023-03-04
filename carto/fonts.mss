@@ -1,15 +1,15 @@
 /* -*- css -*- */
-@place-fonts-major: "Georgia Bold", "DejaVu Sans Bold";
-@place-fonts-minor: "Georgia Regular", "DejaVu Sans Book";
+@place-fonts-major: "Besley* Bold", "Georgia Bold", "DejaVu Serif Bold";
+@place-fonts-minor: "Besley* Book", "Georgia Regular", "DejaVu Serif Book";
 
-@water-fonts-line: "Trebuchet MS Regular", "DejaVu Sans Book";
-@water-fonts-area: "Georgia Italic", "DejaVu Sans Oblique";
+@water-fonts-line: "Lato Regular", "Trebuchet MS Regular", "DejaVu Sans Book";
+@water-fonts-area: "Besley* Book Italic", "Georgia Italic", "DejaVu Serif Oblique";
 
-@feature-fonts-regular: "Trebuchet MS Regular", "DejaVu Sans Book";
-@feature-fonts-italic: "Trebuchet MS Italic", "DejaVu Sans Oblique";
+@feature-fonts-regular: "Lato Medium", "Trebuchet MS Regular", "DejaVu Sans Book";
+@feature-fonts-italic: "Lato Medium Italic", "Trebuchet MS Italic", "DejaVu Sans Oblique";
 
-@road-fonts: "Trebuchet MS Regular", "DejaVu Sans Book";
+@road-fonts: "Lato Regular", "Trebuchet MS Regular", "DejaVu Sans Book";
 
 @shield-fonts: "Roadgeek 2014 Series D Regular", "DejaVu Sans Bold";
 
-@contour-fonts: "Trebuchet MS Regular", "DejaVu Sans Book";
+@contour-fonts: "Lato Regular", "Trebuchet MS Regular", "DejaVu Sans Book";

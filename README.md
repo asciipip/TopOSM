@@ -48,6 +48,36 @@ Pretty much everything is written in Python.  The following modules are used:
  * xattr
 
 
+## Fonts ##
+
+I use [Besley\*][] and [Lato][] for the map labels.  If those aren't
+available, rendering will fall back to Georgia and Trebuchet MS, which (1)
+should be available pretty broadly, and (2) are what the USGS currently
+uses for their topo maps.  If *those* aren't available, either, the
+rendering will fall back to DejaVu Serif and DejaVu Sans, which are
+bundled with Mapnik and will always be available.
+
+  [Besley\*]: https://indestructibletype.com/Besley.html
+  [Lato]: https://www.latofonts.com/
+
+The low-zoom rendering uses [Roadgeek 2014][] for interstate shields and
+will fall back to DejaVu Sans if it's not available.
+
+  [Roadgeek 2014]: https://github.com/sammdot/roadgeek-fonts
+
+As a side note, for those interested in a classic USGS topo look:  The
+USGS began using Georgia and Trebuchet MS on their maps in 2011.  They
+also use Arial for a fair bit of typography on the map "collar", or the
+area on the paper surrounding the map itself.  Prior to 2011, the USGS
+used [ITC Souvenir][] and [Univers][] for its map labels.  Also of
+interest might be [BellTopo Sans][], an attempt to recreate a typeface
+found on very old USGS topo maps.
+
+  [ITC Souvenir]: https://www.fonts.com/font/itc/itc-souvenir
+  [Univers]: https://www.linotype.com/1212814/univers-family.html
+  [BellTopo Sans]: https://www.sarahbellmaps.com/typography-for-topography-belltopo-sans-free-font/
+
+
 ## Installation ##
 
 TBD

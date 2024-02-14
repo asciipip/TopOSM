@@ -322,7 +322,7 @@ class TileExpirer(threading.Thread):
         self.lock = threading.Lock()
         self.current_expire = None
         self.current_expire_zoom = None
-        self.conn = pika.BlockingConnection(pika.ConnectionParameters(host=DB_HOST, heartbeat_interval=0))
+        self.conn = pika.BlockingConnection(pika.ConnectionParameters(host=DB_HOST, heartbeat=0))
         self.chan = self.conn.channel()
 
     def run(self):
@@ -410,38 +410,44 @@ class Queuemaster:
     
     def run(self):
         self.connection = pika.SelectConnection(
-            pika.ConnectionParameters(host=DB_HOST), self.on_connection_open)
+            parameters=pika.ConnectionParameters(host=DB_HOST),
+            on_open_callback=self.on_connection_open)
         self.connection.ioloop.start()
         
     def on_connection_open(self, conn):
-        conn.channel(self.on_channel_open)
+        conn.channel(on_open_callback=self.on_channel_open)
 
     def on_channel_open(self, chan):
         self.channel = chan
         chan.exchange_declare(
-            self.on_exchange_declare, exchange="osm", exchange_type="topic",
-            durable=True, auto_delete=False)
+            "osm",
+            exchange_type="topic",
+            durable=True,
+            auto_delete=False,
+            callback=self.on_exchange_declare)
 
     def on_exchange_declare(self, frame):
         self.channel.queue_declare(
-            queue='toposm-queuemaster',
-            callback=self.on_command_declare,
+            'toposm-queuemaster',
             exclusive=True,
-            auto_delete=True)
+            auto_delete=True,
+            callback=self.on_command_declare)
         self.channel.queue_declare(
-            queue='expire_toposm',
-            callback=self.on_expire_declare,
+            'expire_toposm',
             durable=True,
-            auto_delete=False)
+            auto_delete=False,
+            callback=self.on_expire_declare)
             
-    def on_expire_declare(self,frame):
+    def on_expire_declare(self, frame):
         self.channel.queue_bind(
-            self.on_expire_bind, queue='expire_toposm', exchange='osm',
-            routing_key='expire')
+            'expire_toposm', 'osm',
+            routing_key='expire',
+            callback=self.on_expire_bind)
 
     def on_expire_bind(self,frame):
-        self.channel.basic_consume(self.on_expire, queue='expire_toposm',
-                                   exclusive=True, no_ack=True)
+        self.channel.basic_consume('expire_toposm',
+                                   self.on_expire,
+                                   exclusive=True, auto_ack=True)
         self.channel.add_on_cancel_callback(self.on_cancel)
         self.channel.add_on_close_callback(self.on_close)
         self.initializer = QueueFiller(self.maxz, self.queue)
@@ -450,17 +456,22 @@ class Queuemaster:
     def on_command_declare(self, frame):
         self.command_queue = frame.method.queue
         self.channel.queue_bind(
-            None, queue=self.command_queue,
-            exchange='osm', routing_key='toposm.rendered.#')
+            queue=self.command_queue,
+            exchange='osm',
+            routing_key='toposm.rendered.#')
         self.channel.queue_bind(
-            None, queue=self.command_queue,
-            exchange='osm', routing_key='toposm')
+            queue=self.command_queue,
+            exchange='osm',
+            routing_key='toposm')
         self.channel.queue_bind(
-            self.on_command_bind, queue=self.command_queue,
-            exchange='osm', routing_key='toposm.queuemaster')
+            queue=self.command_queue,
+            exchange='osm',
+            routing_key='toposm.queuemaster',
+            callback=self.on_command_bind)
 
     def on_command_bind(self, frame):
-        self.channel.basic_consume(self.on_command, queue=self.command_queue,
+        self.channel.basic_consume(queue=self.command_queue,
+                                   on_message_callback=self.on_command,
                                    exclusive=True)
         logger.info('queuemaster online')
         self.channel.basic_publish(exchange='osm',
@@ -470,11 +481,13 @@ class Queuemaster:
     def on_cancel(self, frame):
         logger.info('AMQP cancelled: {}'.format(frame))
 
-    def on_close(self, channel, reply_code, reply_text):
-        if reply_code == 0:
-            # Closed from this end; don't try to reopen.
-            return
-        logger.info('AMQP closed channel {}: {} ({})'.format(channel, reply_code, reply_text))
+    def on_close(self, channel, reason):
+        logger.info('AMQP closed channel {}: {}'.format(channel, reason))
+        # Just exit for now.  IN the long run, this ought to reconnect
+        # when there are server-side errors, but we need to be able to
+        # distinguish between "server closed" (and we want to reopen) and
+        # "we closed" (so we want to exit).
+        return
         self.connection = pika.SelectConnection(
             pika.ConnectionParameters(host=DB_HOST), self.on_connection_open)
         self.connection.ioloop.start()

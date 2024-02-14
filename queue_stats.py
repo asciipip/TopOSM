@@ -75,7 +75,7 @@ def request_stats(chan, queue):
     
 conn = pika.BlockingConnection(pika.ConnectionParameters(host=DB_HOST))
 chan = conn.channel()
-queue = chan.queue_declare(exclusive=True).method.queue
+queue = chan.queue_declare('', exclusive=True).method.queue
 chan.queue_bind(queue=queue, exchange='osm', routing_key='toposm')
 chan.queue_bind(queue=queue, exchange='osm', routing_key='toposm.stats')
 
@@ -84,7 +84,7 @@ correlation_id = request_stats(chan, queue)
 
 result_received = False
 while not result_received:
-    (method, props, body) = chan.basic_get(queue=queue, no_ack=True)
+    (method, props, body) = chan.basic_get(queue=queue, auto_ack=True)
     if method:
         message = json.loads(body)
         if 'command' in message and message['command'] == 'queuemaster online':

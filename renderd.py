@@ -71,7 +71,7 @@ class ContinuousRenderThread:
 
         self.logger = logging.getLogger('toposm.renderd')
         
-        rconn = pika.BlockingConnection(pika.ConnectionParameters(host=DB_HOST, heartbeat_interval=0))
+        rconn = pika.BlockingConnection(pika.ConnectionParameters(host=DB_HOST, heartbeat=0))
         self.chan = rconn.channel()
 
         self.commandQueue = 'toposm-render-{}-{}-{}'.format(os.uname()[1], ppid, threadNumber)
@@ -81,7 +81,7 @@ class ContinuousRenderThread:
         self.chan.queue_bind(queue=self.commandQueue, exchange='osm', routing_key='toposm.render.{0}'.format(os.uname()[1]))
         self.chan.queue_bind(queue=self.commandQueue, exchange='osm', routing_key='toposm.render.{0}.{1}'.format(os.uname()[1], ppid))
         self.chan.queue_bind(queue=self.commandQueue, exchange='osm', routing_key='toposm.render.{0}.{1}.{2}'.format(os.uname()[1], ppid, threadNumber + 1))
-        self.chan.basic_consume(self.on_command, queue=self.commandQueue)
+        self.chan.basic_consume(self.commandQueue, self.on_command)
         self.logger.info("Created thread")
 
     def loadMaps(self, zoom):

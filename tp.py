@@ -72,7 +72,7 @@ def render_tile(t, timeout):
     conn = pika.BlockingConnection(pika.ConnectionParameters(host=DB_HOST))
     try:
         chan = conn.channel()
-        queue = chan.queue_declare(exclusive=True).method.queue
+        queue = chan.queue_declare('', exclusive=True).method.queue
         chan.queue_bind(queue=queue, exchange='osm', routing_key='toposm.rendered.{0}.{1}.{2}'.format(t.z, t.metatile.x, t.metatile.y))
         chan.basic_publish(
             exchange='osm',
@@ -81,7 +81,7 @@ def render_tile(t, timeout):
                              'tile': tile.tojson()}))
         start_time = time.time()
         while time.time() - start_time < timeout:
-            (method, props, body) = chan.basic_get(queue=queue, no_ack=True)
+            (method, props, body) = chan.basic_get(queue=queue, auto_ack=True)
             if method:
                 return
             time.sleep(0.1)

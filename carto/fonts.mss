@@ -3,7 +3,7 @@
 @place-fonts-minor: "Besley* Book", "Georgia Regular", "DejaVu Serif Book";
 
 @water-fonts-line: "Lato Regular", "Trebuchet MS Regular", "DejaVu Sans Book";
-@water-fonts-area: "Besley* Book Italic", "Georgia Italic", "DejaVu Serif Oblique";
+@water-fonts-area: "Besley* Book Italic", "Georgia Italic", "DejaVu Serif Italic";
 
 @feature-fonts-regular: "Lato Medium", "Trebuchet MS Regular", "DejaVu Sans Book";
 @feature-fonts-italic: "Lato Medium Italic", "Trebuchet MS Italic", "DejaVu Sans Oblique";

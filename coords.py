@@ -6,7 +6,7 @@ from math import pi, cos, sin, log, exp, atan, ceil, floor
 from env import *;
 
 import mapnik
-from mapnik import Coord, Box2d, Projection
+from mapnik import Coord, Box2d, Projection, ProjTransform
 
 __author__      = "Lars Ahlzen"
 __copyright__   = "(c) Lars Ahlzen 2008-2011"
@@ -73,6 +73,8 @@ class GoogleProjection:
 GOOGLE_PROJECTION = GoogleProjection()
 LATLONG_PROJECTION = Projection(LATLONG_PROJECTION_DEF)
 MERCATOR_PROJECTION = Projection(MERCATOR_PROJECTION_DEF)
+LL_TO_MERC_TRANSFORM = ProjTransform(LATLONG_PROJECTION, MERCATOR_PROJECTION)
+MERC_TO_LL_TRANSFORM = ProjTransform(MERCATOR_PROJECTION, LATLONG_PROJECTION)
 
 
 ##### Geographic coordinate transformation
@@ -80,12 +82,12 @@ MERCATOR_PROJECTION = Projection(MERCATOR_PROJECTION_DEF)
 def LLToMerc(coord):
     """Converts a Coord(lon,lat) or Box2d(l,b,r,t) to
     OSM Mercator (x,y)."""
-    return MERCATOR_PROJECTION.forward(coord)
+    return LL_TO_MERC_TRANSFORM.forward(coord)
 
 def mercToLL(coord):
     """Converts an OSM Mercator Coord(x,y) or Box2d(l,b,r,t)
     to (lon,lat)."""
-    return MERCATOR_PROJECTION.inverse(coord)
+    return MERC_TO_LL_TRANSFORM.forward(coord)
 
 def LLToPixel(coord, z):
     """Converts a Coord(lon,lat) or Box2d(l,b,r,t) to
@@ -111,13 +113,13 @@ def pixelToMerc(coord, z):
         ll = GOOGLE_PROJECTION.pixelToLL(coord, z)
     else:
         ll = GOOGLE_PROJECTION.envPixelToLL(coord, z)
-    return MERCATOR_PROJECTION.forward(ll)
+    return LLToMerc(ll)
 
 def mercToPixel(coord, z):
     """Converts an OSM Mercator Coord(x,y) or Box2d(l,b,r,t)
     to OSM pixel coordinates (x,y) at the specified zoom level."""
     # No direct transformation. Use merc->ll->pixel.
-    ll = MERCATOR_PROJECTION.inverse(coord)
+    ll = mercToLL(coord)
     if isinstance(coord, Coord):
         return GOOGLE_PROJECTION.LLToPixel(ll, z)
     else:

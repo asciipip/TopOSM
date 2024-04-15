@@ -399,6 +399,7 @@ class Queuemaster:
 
     def __init__(self, maxz):
         self.maxz = maxz
+        self.exiting = False
         self.queue = Queue(self.maxz)
         self.initializer = None
         self.expirer = TileExpirer(self.maxz, self.queue)
@@ -483,11 +484,10 @@ class Queuemaster:
 
     def on_close(self, channel, reason):
         logger.info('AMQP closed channel {}: {}'.format(channel, reason))
-        # Just exit for now.  IN the long run, this ought to reconnect
-        # when there are server-side errors, but we need to be able to
-        # distinguish between "server closed" (and we want to reopen) and
-        # "we closed" (so we want to exit).
-        return
+        if self.exiting:
+            return
+        # Unless we're actively exiting, assume the connection loss was
+        # transient and we should reconnect.
         self.connection = pika.SelectConnection(
             pika.ConnectionParameters(host=DB_HOST), self.on_connection_open)
         self.connection.ioloop.start()
@@ -590,6 +590,7 @@ class Queuemaster:
         
     def quit(self):
         logger.info('Exiting.')
+        self.exiting = True
         self.initializer.quit()
         self.expirer.quit()
         self.expirer.join()

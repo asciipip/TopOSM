@@ -489,7 +489,8 @@ class Queuemaster:
         # Unless we're actively exiting, assume the connection loss was
         # transient and we should reconnect.
         self.connection = pika.SelectConnection(
-            pika.ConnectionParameters(host=DB_HOST), self.on_connection_open)
+            parameters=pika.ConnectionParameters(host=DB_HOST),
+            on_open_callback=self.on_connection_open)
         self.connection.ioloop.start()
 
     ### AMQP commands.

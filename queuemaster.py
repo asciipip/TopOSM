@@ -416,9 +416,11 @@ class Queuemaster:
         self.connection.ioloop.start()
         
     def on_connection_open(self, conn):
+        logger.info('AMQP connection open: {}'.format(conn))
         conn.channel(on_open_callback=self.on_channel_open)
 
     def on_channel_open(self, chan):
+        logger.info('AMQP channel open: {}'.format(chan))
         self.channel = chan
         chan.exchange_declare(
             "osm",
@@ -428,9 +430,11 @@ class Queuemaster:
             callback=self.on_exchange_declare)
 
     def on_exchange_declare(self, frame):
+        logger.info('AMQP exchange declared: {}'.format(frame))
+        # Really, the command queue ought to be exclusive, too, but that
+        # seems to interfere with the reconnection after connection loss.
         self.channel.queue_declare(
             'toposm-queuemaster',
-            exclusive=True,
             auto_delete=True,
             callback=self.on_command_declare)
         self.channel.queue_declare(
@@ -440,12 +444,14 @@ class Queuemaster:
             callback=self.on_expire_declare)
             
     def on_expire_declare(self, frame):
+        logger.info('AMQP expire queue declared: {}'.format(frame))
         self.channel.queue_bind(
             'expire_toposm', 'osm',
             routing_key='expire',
             callback=self.on_expire_bind)
 
     def on_expire_bind(self,frame):
+        logger.info('AMQP expire channel bound: {}'.format(frame))
         self.channel.basic_consume('expire_toposm',
                                    self.on_expire,
                                    exclusive=True, auto_ack=True)
@@ -455,6 +461,7 @@ class Queuemaster:
         self.initializer.start()
     
     def on_command_declare(self, frame):
+        logger.info('AMQP command queue declared: {}'.format(frame))
         self.command_queue = frame.method.queue
         self.channel.queue_bind(
             queue=self.command_queue,
@@ -471,6 +478,7 @@ class Queuemaster:
             callback=self.on_command_bind)
 
     def on_command_bind(self, frame):
+        logger.info('AMQP command queue bound: {}'.format(frame))
         self.channel.basic_consume(queue=self.command_queue,
                                    on_message_callback=self.on_command,
                                    exclusive=True)
@@ -488,10 +496,7 @@ class Queuemaster:
             return
         # Unless we're actively exiting, assume the connection loss was
         # transient and we should reconnect.
-        self.connection = pika.SelectConnection(
-            parameters=pika.ConnectionParameters(host=DB_HOST),
-            on_open_callback=self.on_connection_open)
-        self.connection.ioloop.start()
+        self.run()
 
     ### AMQP commands.
     

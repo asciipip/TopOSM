@@ -1,6 +1,6 @@
-# Phil's TopOSM Variant
+# Pip's TopOSM Variant
 
-This is my ([Phil Gold's](mailto:phil_g@pobox.com)) repository for
+This is my ([Pip Gold's](mailto:pip@aperiodic.net)) repository for
 rendering [OpenStreetMap](https://www.openstreetmap.org/) data.  It's
 based on Lars Ahlzen's [TopOSM](http://toposm.ahlzen.com/), but I've
 modified it significantly according to what I want to see in a map.
@@ -27,7 +27,7 @@ In addition, I use some less common things:
  * RabbitMQ (any AMQP server would do) to coordinate the rendering queues
  * InfluxDB to record rendering statistics
 
-  [osm-shields]: https://gitlab.com/asciiphil/osm-shields
+  [osm-shields]: https://gitlab.com/asciipip/osm-shields
 
 And my full rendering stack needs stuff from two other repositories:
 
@@ -156,7 +156,7 @@ communications between programs.
 ## Credits ##
 
 TopOSM was originally created by Lars Ahlzen (lars@ahlzen.com), with
-contributions from Ian Dees, Phil Gold, Kevin Kenny, Yves Cainaud, Richard
+contributions from Ian Dees, Pip Gold, Kevin Kenny, Yves Cainaud, Richard
 Weait, and others.
 
 License: GPLv2

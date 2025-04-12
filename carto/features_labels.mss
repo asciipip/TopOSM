@@ -122,12 +122,20 @@ Map {
         text-name: [name];
         text-face-name: @road-fonts;
         text-fill: @streetnamecolor;
-        text-halo-fill: @halocolor;
         text-halo-radius: @haloradius;
         text-spacing: 300;
         text-placement: line;
         text-max-char-angle-delta: 40;
         text-size: 9;
+        text-halo-fill: [colour];
+        [colour = null]     { text-halo-fill: @halocolor; }
+        [colour = 'red']    { text-halo-fill: #eb476f; }
+        [colour = 'orange'] { text-halo-fill: #f58231; }
+        [colour = 'yellow'] { text-halo-fill: #ffe119; }
+        [colour = 'blue']   { text-halo-fill: #5673dc; }
+        [colour = 'purple'] { text-halo-fill: #c050e2; }
+        [colour = 'silver'],
+        [colour = 'gray']   { text-halo-fill: #a9a9a9; }
     }
 }
 

@@ -38,8 +38,15 @@
         [route = 'hiking'] {
             [zoom >= 15][zoom < 16] { line-width: 4.5; }
             [zoom >= 16]            { line-width: 6.0; }
-            line-color: [colour];
             line-join: round;
+            line-color: [colour];
+            [colour = 'red']    { line-color: #e6194b; }
+            [colour = 'orange'] { line-color: #f58231; }
+            [colour = 'yellow'] { line-color: #ffe119; }
+            [colour = 'blue']   { line-color: #4363d8; }
+            [colour = 'purple'] { line-color: #911eb4; }
+            [colour = 'silver'],
+            [colour = 'gray']   { line-color: #a9a9a9; }
         }
     }
 }

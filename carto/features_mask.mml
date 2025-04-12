@@ -81,7 +81,7 @@ Layer:
     srs: *srs
     Datasource:
       <<: *osm2pgsql
-      table: (SELECT way, highway, name, tunnel FROM planet_osm_line WHERE name IS NOT NULL ORDER BY z_order) AS streetnames
+      table: (SELECT way, highway, name, tunnel, lower(colour) AS colour FROM planet_osm_line WHERE name IS NOT NULL ORDER BY z_order) AS streetnames
   - id: water-line-names
     name: water-line-names
     srs: *srs

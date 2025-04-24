@@ -8,7 +8,6 @@ from os import path
 from threading import Lock
 
 import filelock
-import influxdb
 
 from env import *
 
@@ -44,6 +43,7 @@ def ensureDirExists(path):
             os.makedirs(path)
 
 def connect_to_influxdb():
+    import influxdb
     return influxdb.InfluxDBClient(
         host=INFLUX_HOST,
         port=INFLUX_PORT,

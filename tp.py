@@ -19,7 +19,7 @@ from boto.s3.key import Key
 
 import pika
 
-from toposm import *
+from common import *
 
 CONTENT_TYPES = {'jpg': 'image/jpeg', 'png': 'image/png'}
 LOW_BANDWIDTH_TILESET = ('jpeg90_h', 'jpg')

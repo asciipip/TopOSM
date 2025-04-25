@@ -10,9 +10,6 @@ import socket
 import datetime
 from io import StringIO
 
-import cgi
-#import cgitb; cgitb.enable()
-
 import boto
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key

@@ -8,6 +8,7 @@ from os import path
 from threading import Lock
 
 import filelock
+import xattr
 
 from env import *
 

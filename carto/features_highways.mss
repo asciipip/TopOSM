@@ -255,12 +255,12 @@
     [zoom >= 13][highway = 'track'][bicycle = 'designated'] {
         line-color: black;
         [zoom >= 13][zoom < 15] {
-            line-width: 1.0;
+            line-width: 1.2;
             [tunnel =  'yes'] { line-dasharray: 0,6,5,1; }
             [tunnel != 'yes'] { line-dasharray: 5,1; }
         }
         [zoom >= 15] {
-            line-width: 2.0;
+            line-width: 2.4;
             [tunnel =  'yes'] { line-dasharray: 0,7,6,1; }
             [tunnel != 'yes'] { line-dasharray: 6,1; }
         }
@@ -274,8 +274,17 @@
         line-color: black;
         [zoom >= 13][zoom < 15] {
             line-width: 0.8;
+            [operator != ''],
+            [informal = 'no'] {
+                line-width: 1.0;
+            }
+            [access = 'no'] { line-width: 0; }
             [tunnel =  'yes'] { line-dasharray: 0,5,3,2; }
             [tunnel != 'yes'] { line-dasharray: 3,2; }
+            [informal = 'yes'] {
+                [tunnel =  'yes'] { line-dasharray: 0,3,1,2; }
+                [tunnel != 'yes'] { line-dasharray: 1,2; }
+            }
         }
         [zoom >= 15] {
             /* Invert color if we know it's going onto a dark background. */
@@ -284,8 +293,18 @@
                 line-color: white;
             }
             line-width: 1.5;
+            [access = 'no'] { line-width: 0; }
             [tunnel =  'yes'] { line-dasharray: 0,7,4,3; }
             [tunnel != 'yes'] { line-dasharray: 4,3; }
+            [informal = 'yes'] {
+                [tunnel =  'yes'] { line-dasharray: 0,5,2,3; }
+                [tunnel != 'yes'] { line-dasharray: 2,3; }
+            }
+            [operator != ''],
+            [informal = 'no'] {
+                [tunnel =  'yes'] { line-dasharray: 0,9,6,3; }
+                [tunnel != 'yes'] { line-dasharray: 6,3; }
+            }
         }
     }
 }

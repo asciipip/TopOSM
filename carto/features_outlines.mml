@@ -233,7 +233,7 @@ Layer:
     srs: *srs
     Datasource:
       <<: *osm2pgsql
-      table: (SELECT way, highway, tunnel, bicycle, lower(colour) AS colour, CASE WHEN highway LIKE '%_link' THEN true ELSE false END AS link FROM planet_osm_line WHERE highway IS NOT NULL ORDER BY FLOOR(z_order / 10.0), link DESC, z_order) AS lines
+      table: (SELECT way, highway, tunnel, access, informal, operator, bicycle, lower(colour) AS colour, CASE WHEN highway LIKE '%_link' THEN true ELSE false END AS link FROM planet_osm_line WHERE highway IS NOT NULL ORDER BY FLOOR(z_order / 10.0), link DESC, z_order) AS lines
   - id: aeroway-line-outlines
     name: aeroway-line-outlines
     class: aeroway-outlines
